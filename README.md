@@ -1,2 +1,2 @@
 # LI2
-LI2 Project 22/23
+LI2 22/23 Project
