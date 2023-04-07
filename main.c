@@ -55,6 +55,13 @@ void update(STATE *st) {
 	}
 }
 
+void draw_player(STATE *st){
+	attron(COLOR_PAIR(COLOR_WHITE));
+    mvaddch(st->playerX, st->playerY, '@' | A_BOLD);
+    attroff(COLOR_PAIR(COLOR_WHITE));
+}
+
+
 int main() {
 	STATE st = {20,20};
 	WINDOW *wnd = initscr();
