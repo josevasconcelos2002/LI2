@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <ncurses.h>
 #include <time.h>
+#include "player.h"
+#include "state.h"
+
 
 /**
  *
@@ -13,10 +16,6 @@
  * - o que está em cada casa
  *
  */
-typedef struct state {
-	int playerX;
-	int playerY;
-} STATE;
 
 
 /**
@@ -24,14 +23,14 @@ typedef struct state {
  * Um pequeno exemplo que mostra o que se pode fazer
  */
 void do_movement_action(STATE *st, int dx, int dy) {
-	st->playerX += dx;
-	st->playerY += dy;
+	set_playerX(get_player(st),get_playerX(get_player(st)) + dx);
+	set_playerY(get_player(st),get_playerY(get_player(st)) + dy);
 }
 
 void update(STATE *st) {
 	int key = getch();
 
-	mvaddch(st->playerX, st->playerY, ' ');
+	mvaddch(get_playerX(get_player(st)), get_playerY(get_player(st)), ' ');
 	switch(key) {
 		case KEY_A1:
 		case '7': do_movement_action(st, -1, -1); break;
@@ -51,36 +50,34 @@ void update(STATE *st) {
 		case '2': do_movement_action(st, +1, +0); break;
 		case KEY_C3:
 		case '3': do_movement_action(st, +1, +1); break;
+		case 'w': do_movement_action(st, -1, +0); break;
+		case 's': do_movement_action(st, +1, +0); break;
+		case 'a': do_movement_action(st, +0, -1); break;
+		case 'd': do_movement_action(st, +0, +1); break;
 		case 'q': endwin(); exit(0); break;
 	}
 }
 
 void draw_player(STATE *st){
 	attron(COLOR_PAIR(COLOR_WHITE));
-    mvaddch(st->playerX, st->playerY, '@' | A_BOLD);
+    mvaddch(get_playerX(st), get_playerY(st), '@' | A_BOLD);
     attroff(COLOR_PAIR(COLOR_WHITE));
 }
 
-void draw_light(STATE st){
+void draw_light(STATE *st){
 	attron(COLOR_PAIR(COLOR_YELLOW));
-		mvaddch(st.playerX - 1, st.playerY - 1, '.' | A_BOLD);
-		mvaddch(st.playerX - 1, st.playerY + 0, '.' | A_BOLD);
-		mvaddch(st.playerX - 1, st.playerY + 1, '.' | A_BOLD);
-		mvaddch(st.playerX + 0, st.playerY - 1, '.' | A_BOLD);
-		mvaddch(st.playerX + 0, st.playerY + 1, '.' | A_BOLD);
-		mvaddch(st.playerX + 1, st.playerY - 1, '.' | A_BOLD);
-		mvaddch(st.playerX + 1, st.playerY + 0, '.' | A_BOLD);
-		mvaddch(st.playerX + 1, st.playerY + 1, '.' | A_BOLD);
+		mvaddch(get_playerX(get_player(st)) - 1, get_playerY(get_player(st)) - 1, '.' | A_BOLD);
+		mvaddch(get_playerX(get_player(st)) - 1, get_playerY(get_player(st)) + 0, '.' | A_BOLD);
+		mvaddch(get_playerX(get_player(st)) - 1, get_playerY(get_player(st)) + 1, '.' | A_BOLD);
+		mvaddch(get_playerX(get_player(st)) + 0, get_playerY(get_player(st)) - 1, '.' | A_BOLD);
+		mvaddch(get_playerX(get_player(st)) + 0, get_playerY(get_player(st)) + 1, '.' | A_BOLD);
+		mvaddch(get_playerX(get_player(st)) + 1, get_playerY(get_player(st)) - 1, '.' | A_BOLD);
+		mvaddch(get_playerX(get_player(st)) + 1, get_playerY(get_player(st)) + 0, '.' | A_BOLD);
+		mvaddch(get_playerX(get_player(st)) + 1, get_playerY(get_player(st)) + 1, '.' | A_BOLD);
                 attroff(COLOR_PAIR(COLOR_YELLOW));
 }
 
-
-int main() {
-	STATE st = {20,20};
-	WINDOW *wnd = initscr();
-	int ncols, nrows;
-	getmaxyx(wnd,nrows,ncols);
-
+void inicializa(STATE *st){
 	srandom(time(NULL));
 	start_color();
 
@@ -91,18 +88,26 @@ int main() {
 	keypad(stdscr, true);
 
 	init_pair(COLOR_WHITE, COLOR_WHITE, COLOR_BLACK);
-        init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
-        init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
+    init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
+}
 
+
+int main() {
+	STATE *st;
+	inicializa(&st);
+	WINDOW *wnd = initscr();
+	int ncols, nrows;
+	getmaxyx(wnd,nrows,ncols);
 	while(1) {
 		move(nrows - 1, 0);
 		attron(COLOR_PAIR(COLOR_BLUE));
-		printw("(%d, %d) %d %d", st.playerX, st.playerY, ncols, nrows);
+		printw("(%d, %d) %d %d", get_playerX(get_player(st)), get_playerY(get_player(st)), ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
 		draw_player(&st);
-		draw_light(st);
-		move(st.playerX, st.playerY);
-		update(&st);
+		draw_light(&st);
+		move(get_playerX(get_player(st)), get_playerY(get_player(st)));
+		update(st);
 	}
 
 	return 0;
