@@ -5,6 +5,10 @@
 
 typedef struct state  STATE;
 
-PLAYER *get_player(STATE *st);
+//typedef struct player PLAYER;
+
+struct player *get_player(STATE *st);
+
+void inicializa_state(STATE *st);
 
 #endif

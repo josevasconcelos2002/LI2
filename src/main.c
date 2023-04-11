@@ -5,6 +5,7 @@
 #include <time.h>
 #include "player.h"
 #include "state.h"
+#include "monsters.h"
 
 
 /**
@@ -60,7 +61,7 @@ void update(STATE *st) {
 
 void draw_player(STATE *st){
 	attron(COLOR_PAIR(COLOR_WHITE));
-    mvaddch(get_playerX(st), get_playerY(st), '@' | A_BOLD);
+    mvaddch(get_playerX(get_player(st)), get_playerY(get_player(st)), '@' | A_BOLD);
     attroff(COLOR_PAIR(COLOR_WHITE));
 }
 
@@ -77,7 +78,7 @@ void draw_light(STATE *st){
                 attroff(COLOR_PAIR(COLOR_YELLOW));
 }
 
-void inicializa(STATE *st){
+void inicializa(){
 	srandom(time(NULL));
 	start_color();
 
@@ -93,9 +94,10 @@ void inicializa(STATE *st){
 }
 
 
-int main() {
-	STATE *st;
-	inicializa(&st);
+int main(){
+	STATE *st = NULL;
+	inicializa_state(st);
+	inicializa();
 	WINDOW *wnd = initscr();
 	int ncols, nrows;
 	getmaxyx(wnd,nrows,ncols);
@@ -104,11 +106,10 @@ int main() {
 		attron(COLOR_PAIR(COLOR_BLUE));
 		printw("(%d, %d) %d %d", get_playerX(get_player(st)), get_playerY(get_player(st)), ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
-		draw_player(&st);
-		draw_light(&st);
+		draw_player(st);
+		draw_light(st);
 		move(get_playerX(get_player(st)), get_playerY(get_player(st)));
 		update(st);
 	}
-
 	return 0;
 }

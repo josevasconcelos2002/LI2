@@ -1,12 +1,17 @@
 #include "state.h"
 #include "player.h"
+#include "monsters.h"
+
 
 struct state {
 	PLAYER *player;
-	MONSTER monstros[100];
+	MONSTER *monstros;
 };
 
+void inicializa_state(STATE *st){
+	inicializa_player(get_player(st));
+}
 
-PLAYER *get_player(STATE *st){
-	return st->player;
+struct player *get_player(STATE *st){
+	return (struct player *)st->player;
 }
