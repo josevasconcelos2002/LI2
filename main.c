@@ -61,6 +61,19 @@ void draw_player(STATE *st){
     attroff(COLOR_PAIR(COLOR_WHITE));
 }
 
+void draw_light(STATE st){
+	attron(COLOR_PAIR(COLOR_YELLOW));
+		mvaddch(st.playerX - 1, st.playerY - 1, '.' | A_BOLD);
+		mvaddch(st.playerX - 1, st.playerY + 0, '.' | A_BOLD);
+		mvaddch(st.playerX - 1, st.playerY + 1, '.' | A_BOLD);
+		mvaddch(st.playerX + 0, st.playerY - 1, '.' | A_BOLD);
+		mvaddch(st.playerX + 0, st.playerY + 1, '.' | A_BOLD);
+		mvaddch(st.playerX + 1, st.playerY - 1, '.' | A_BOLD);
+		mvaddch(st.playerX + 1, st.playerY + 0, '.' | A_BOLD);
+		mvaddch(st.playerX + 1, st.playerY + 1, '.' | A_BOLD);
+                attroff(COLOR_PAIR(COLOR_YELLOW));
+}
+
 
 int main() {
 	STATE st = {20,20};
@@ -81,32 +94,13 @@ int main() {
         init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
         init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
 
-	/**
-	 * Este código está muito mal escrito!
-	 * Deveria existir uma função chamada draw_player!
-	 *
-	 * Se estamos a desenhar uma luz à volta do jogador
-	 * deveria existir uma função chamada draw_light!
-	 *
-	 */
 	while(1) {
 		move(nrows - 1, 0);
 		attron(COLOR_PAIR(COLOR_BLUE));
 		printw("(%d, %d) %d %d", st.playerX, st.playerY, ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
-		attron(COLOR_PAIR(COLOR_WHITE));
-		mvaddch(st.playerX, st.playerY, '@' | A_BOLD);
-		attroff(COLOR_PAIR(COLOR_WHITE));
-		attron(COLOR_PAIR(COLOR_YELLOW));
-		mvaddch(st.playerX - 1, st.playerY - 1, '.' | A_BOLD);
-		mvaddch(st.playerX - 1, st.playerY + 0, '.' | A_BOLD);
-		mvaddch(st.playerX - 1, st.playerY + 1, '.' | A_BOLD);
-		mvaddch(st.playerX + 0, st.playerY - 1, '.' | A_BOLD);
-		mvaddch(st.playerX + 0, st.playerY + 1, '.' | A_BOLD);
-		mvaddch(st.playerX + 1, st.playerY - 1, '.' | A_BOLD);
-		mvaddch(st.playerX + 1, st.playerY + 0, '.' | A_BOLD);
-		mvaddch(st.playerX + 1, st.playerY + 1, '.' | A_BOLD);
-                attroff(COLOR_PAIR(COLOR_YELLOW));
+		draw_player(&st);
+		draw_light(st);
 		move(st.playerX, st.playerY);
 		update(&st);
 	}
