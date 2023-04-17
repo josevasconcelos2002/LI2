@@ -158,26 +158,22 @@ void draw_player(STATE *st){
 }
 
 bool is_parede(int key){
-	return (key == 35 || key == 124);
+	return (key == 35);
 }
 
-bool fora_do_mapa(int y, int x){
-	bool r = false;
-	if(x>34 || x<28 || y>33|| y<27) r = true;
-	return r;
-}
+
 
 void draw_light(STATE *st){
 	attron(COLOR_PAIR(COLOR_YELLOW));
-		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-3)) && !fora_do_mapa(st->player->playerY, st->player->playerX-3)) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-3)) && !fora_do_mapa(st->player->playerY-1, st->player->playerX-3)) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ - 3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-3)) && !fora_do_mapa(st->player->playerY+1, st->player->playerX-3)) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ -3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX-3)) && !fora_do_mapa(st->player->playerY-2, st->player->playerX-3)) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 2,  st->player->playerX/*get_playerY(get_player(st))*/ - 3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX-3)) && !fora_do_mapa(st->player->playerY+2, st->player->playerX-3)) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ + 2,  st->player->playerX/*get_playerY(get_player(st))*/ -3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-2)) && !fora_do_mapa(st->player->playerY, st->player->playerX-2)) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/-2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-2)) && !fora_do_mapa(st->player->playerY-1, st->player->playerX-2)) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ - 2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-2)) && !fora_do_mapa(st->player->playerY+1, st->player->playerX-2)) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ -2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-1)) && !fora_do_mapa(st->player->playerY, st->player->playerX-1)) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/-1, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ - 3, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ -3, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 2,  st->player->playerX/*get_playerY(get_player(st))*/ - 3, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ + 2,  st->player->playerX/*get_playerY(get_player(st))*/ -3, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/-2, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ - 2, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ -2, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/-1, '.' | A_BOLD);
                 attroff(COLOR_PAIR(COLOR_YELLOW));
 }
 
