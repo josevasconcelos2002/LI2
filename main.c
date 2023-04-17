@@ -4,6 +4,7 @@
 #include <ncurses.h>
 #include <time.h>
 #include <stdbool.h>
+#include "src/testeGeraMapa.h"
 //#include "player.h"
 //#include "state.h"
 //#include "monsters.h"
@@ -32,6 +33,99 @@ typedef struct state {
 	PLAYER *player;
 	//MONSTER *monstros;
 } STATE;
+
+
+
+
+void init_map(char map[ROWS][COLS]) {
+    // Inicializa o mapa com caminhos e paredes aleatórios
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (rand() < WALL_PROB * RAND_MAX) {
+                map[i][j] = '#';
+            } else {
+                map[i][j] = ' ';
+            }
+        }
+    }
+}
+
+void update_map(char map[ROWS][COLS]) {
+    // Faz update ao mapa usando o algoritmo cellular automata, para o melhorar
+    char new_map[ROWS][COLS];
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            int num_walls = 0;
+            for (int di = -1; di <= 1; di++) {
+                for (int dj = -1; dj <= 1; dj++) {
+                    if (i+di >= 0 && i+di < ROWS && j+dj >= 0 && j+dj < COLS) {
+                        if (map[i+di][j+dj] == '#') {
+                            num_walls++;
+                        }
+                    }
+                }
+            }
+            if (num_walls >= 5 || (num_walls == 1 && rand() < 0.2 * RAND_MAX)) {
+                new_map[i][j] = '#';
+            } else {
+                new_map[i][j] = ' ';
+            }
+        }
+    }
+    // Copia o novo mapa para o original
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            map[i][j] = new_map[i][j];
+        }
+    }
+}
+
+void remove_isolated_walls(char map[ROWS][COLS]) {
+    // Remove paredes isoladas e pequenos blocos de paredes
+    char new_map[ROWS][COLS];
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (map[i][j] == '#') {
+                int num_walls = 0;
+                for (int di = -1; di <= 1; di++) {
+                    for (int dj = -1; dj <= 1; dj++) {
+                        if (i+di >= 0 && i+di < ROWS && j+dj >= 0 && j+dj < COLS) {
+                            if (map[i+di][j+dj] == '#') {
+                                num_walls++;
+                            }
+                        }
+                    }
+                }
+                if (num_walls >= 1 && num_walls <= 5) {
+                    // Verifica se há mais paredes numa area de 3x3 à volta de uma parede. Se estiver isolada, transforma em caminho
+                    int num_surrounding_walls = 0;
+                    for (int di = -1; di <= 1; di++) {
+                        for (int dj = -1; dj <= 1; dj++) {
+                            if (i+di >= 0 && i+di < ROWS && j+dj >= 0 && j+dj < COLS) {
+                                if (map[i+di][j+dj] == '#') {
+                                    num_surrounding_walls++;
+                                }
+                            }
+                        }
+                    }
+                    if (num_surrounding_walls <= 5) {
+                        new_map[i][j] = ' ';
+                    } else {
+                        new_map[i][j] = '#';
+                    }
+                }
+            } else {
+                new_map[i][j] = ' ';
+            }
+        }
+    }
+    // Copia o novo mapa para o original
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            map[i][j] = new_map[i][j];
+        }
+    }
+}
 
 
 
@@ -106,10 +200,10 @@ bool is_move_down(int key){
 
 bool valid_move(STATE *st,int key){
 	bool r = true;
-	if(is_move_right(key) && mvinch(st->player->playerY+1, st->player->playerX) == '#') r = false;
-	if(is_move_left(key) && mvinch(st->player->playerY-1, st->player->playerX) == '#') r = false;
-	if(is_move_up(key) && mvinch(st->player->playerY, st->player->playerX-1) == '|') r = false;
-	if(is_move_down(key) && mvinch(st->player->playerY, st->player->playerX+1) == '|') r = false;
+	if(is_move_right(key) && mvinch(st->player->playerY, st->player->playerX+1) == '#') r = false;
+	if(is_move_left(key) && mvinch(st->player->playerY, st->player->playerX-1) == '#') r = false;
+	if(is_move_up(key) && mvinch(st->player->playerY-1, st->player->playerX) == '#') r = false;
+	if(is_move_down(key) && mvinch(st->player->playerY+1, st->player->playerX) == '#') r = false;
 	return r;
 }
 
@@ -157,34 +251,7 @@ void menu(){
 
 
 
-void mapa1(STATE *st){
-	st->player->playerX = 30;
-	st->player->playerY = 30;
-	mvaddch(30, 28, '#' | A_BOLD);
-	mvaddch(29, 28, '#' | A_BOLD);
-	mvaddch(28, 28, '#' | A_BOLD);
-	mvaddch(27, 28, '#' | A_BOLD);
-	mvaddch(31, 28, '#' | A_BOLD);
-	mvaddch(32, 28, '#' | A_BOLD);
-	mvaddch(33, 28, '#' | A_BOLD);
-	mvaddch(33, 29, '|' | A_BOLD);
-	mvaddch(33, 30, '|' | A_BOLD);
-	mvaddch(33, 31, '|' | A_BOLD);
-	mvaddch(33, 32, '|' | A_BOLD);
-	mvaddch(33, 33, '|' | A_BOLD);
-	mvaddch(27, 29, '|' | A_BOLD);
-	mvaddch(27, 30, '|' | A_BOLD);
-	mvaddch(27, 31, '|' | A_BOLD);
-	mvaddch(27, 32, '|' | A_BOLD);
-	mvaddch(27, 33, '|' | A_BOLD);
-	mvaddch(30, 34, '#' | A_BOLD);
-	mvaddch(29, 34, '#' | A_BOLD);
-	mvaddch(28, 34, '#' | A_BOLD);
-	mvaddch(27, 34, '#' | A_BOLD);
-	mvaddch(31, 34, '#' | A_BOLD);
-	mvaddch(32, 34, '#' | A_BOLD);
-	mvaddch(33, 34, '#' | A_BOLD);
-}
+
 
 
 void inicializa(){
@@ -210,12 +277,42 @@ int main(){
 	WINDOW *wnd = initscr();
 	int ncols, nrows;
 	getmaxyx(wnd,nrows,ncols);
+	char map[ROWS][COLS];
+		init_map(map);
+
+		// Faz update no mapa
+		for (int i = 0; i < ITERATIONS; i++) {
+			update_map(map);
+		}
+		
+		// Remove paredes isoladas e pequenos blocos de paredes
+		remove_isolated_walls(map);
+
+		// Adiciona paredes nas bordas do mapa
+		for (int i = 0; i < ROWS; i++) {
+			map[i][0] = '#';
+			map[i][COLS-1] = '#';
+		}
+		for (int j = 0; j < COLS; j++) {
+			map[0][j] = '#';
+			map[ROWS-1][j] = '#';
+		}
+
+		// Desenha o mapa no ecra
+		clear();
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLS; j++) {
+				mvaddch(i, j, map[i][j]);
+			}
+		}
+		//refresh();
 	while(1) {
 		move(nrows - 1, 0);
 		attron(COLOR_PAIR(COLOR_BLUE));
 		printw("(%d, %d) %d %d", st->player->playerX, st->player->playerY, ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
-		mapa1(st);
+				// Inicializa o mapa
+		
 		//draw_player(st);
 		//draw_light(st);
 		//update(st);

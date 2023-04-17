@@ -1,11 +1,9 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
+#include "testeGeraMapa.h"
 
-#define ROWS 52
-#define COLS 211
-#define WALL_PROB 0.48
-#define ITERATIONS 10
+
 
 void init_map(char map[ROWS][COLS]) {
     // Inicializa o mapa com caminhos e paredes aleatórios
