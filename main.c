@@ -151,17 +151,22 @@ void do_movement_action(STATE *st, int dx, int dy) {
 }
 
 
-void draw_player(STATE *st){
-	attron(COLOR_PAIR(COLOR_WHITE));
-    mvaddch(st->player->playerY, st->player->playerX, '@' | A_BOLD);
-    attroff(COLOR_PAIR(COLOR_WHITE));
-}
 
 bool is_parede(int key){
 	return (key == 35);
 }
 
-
+void remove_light(STATE *st){
+	if(mvinch(st->player->playerY, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
+	if(mvinch(st->player->playerY-1, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ -1,  st->player->playerX-1/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
+	if(mvinch(st->player->playerY+1, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/+1 ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
+	if(mvinch(st->player->playerY-2, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/-2 ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
+	if(mvinch(st->player->playerY+2, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/+2 ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
+	if(mvinch(st->player->playerY, st->player->playerX-2) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-2, '~' | A_BOLD);
+	if(mvinch(st->player->playerY-1, st->player->playerX-2) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/-1 ,  st->player->playerX/*get_playerY(get_player(st))*/-2, '~' | A_BOLD);
+	if(mvinch(st->player->playerY+1, st->player->playerX-2) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/-2, '~' | A_BOLD);
+	if(mvinch(st->player->playerY, st->player->playerX-1) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-1, '~' | A_BOLD);
+}
 
 void draw_light(STATE *st){
 	attron(COLOR_PAIR(COLOR_YELLOW));
@@ -177,6 +182,13 @@ void draw_light(STATE *st){
                 attroff(COLOR_PAIR(COLOR_YELLOW));
 }
 
+void draw_player(STATE *st){
+	attron(COLOR_PAIR(COLOR_WHITE));
+    mvaddch(st->player->playerY, st->player->playerX, '@' | A_BOLD);
+    attroff(COLOR_PAIR(COLOR_WHITE));
+	draw_light(st);
+	remove_light(st);
+}
 
 bool is_move_right(int key){
 	return key == 100;
@@ -232,10 +244,12 @@ void update(STATE *st) {
 		case 's': if(valid_move(st,(int)'s')) do_movement_action(st, +0, +1); break;
 		case 'a': if(valid_move(st,(int)'a')) do_movement_action(st, -1, +0); break;
 		case 'd': if(valid_move(st,(int)'d')) do_movement_action(st, +1, +0); break;
+		case 'v': endwin(); exit(0); break; //altera o modo de visao
 		case 'q': endwin(); exit(0); break;
 	}
 	draw_player(st);
-	draw_light(st);
+	//sleep(1);
+	//draw_light(st);
 }
 
 
