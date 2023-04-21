@@ -9,7 +9,6 @@
 //#include "state.h"
 //#include "monsters.h"
 
-
 /**
  *
  * Falta muita coisa, incluindo por exemplo:
@@ -27,11 +26,16 @@ typedef struct player{
 	int playerAtack;
 } PLAYER;
 
-
+typedef struct monster{
+	int monsterX;
+	int monsterY;
+	int monsterHealth;
+	int monsterAtack;
+} MONSTER;
 
 typedef struct state {
 	PLAYER *player;
-	//MONSTER *monstros;
+	MONSTER *monster;
 } STATE;
 
 
@@ -136,9 +140,21 @@ void inicializa_player(PLAYER *player){
     player->playerAtack = 10;
 }
 
+/*
+void inicializa_monster(MONSTER *monster){
+	monster->monsterX = ...;
+    monster->monsterY = ...;
+    monster->monsterHealth = ...;
+    monster->monsterAtack = ...;
+
+}
+*/
+
 void inicializa_state(STATE *st){
 	st->player = malloc(sizeof(PLAYER));
 	inicializa_player(st->player);
+	//st->monster = malloc(sizeof(MONSTER));
+	//inicializa_monster(st->monster);
 }
 
 /**
@@ -247,7 +263,11 @@ void draw_player(STATE *st){
     attroff(COLOR_PAIR(COLOR_WHITE));
 }
 
-
+void draw_monster(STATE *st){
+	//attron(COLOR_PAIR(COLOR_RED));
+	mvaddch(st->monster->monsterY, st->monster->mosnterX, '!' | A_BOLD);
+	//attroff(COLOR_PAIR(COLOR_RED));
+}
 
 bool valid_move(STATE *st,int key){
 	bool r = true;
@@ -290,11 +310,24 @@ void update(STATE *st) {
 		case 'v': endwin(); exit(0); break; //altera o modo de visao
 		case 'q': endwin(); exit(0); break;
 	}
+
+	
+
+
+	spawn_mob(st);
+	//draw_monster(st);
 	draw_player(st);
 	draw_light(st,key);
 	remove_light(st,key);
 }
 
+int spawn_mob(STATE *st){
+	for (i = 0; i < 10; i++) {
+      st->monster->monsterX = rand() % ROWS;
+      st->monster->monsterY = rand() % COLS;
+      mvaddch(MONSTER.monsterY, MONSTER.monsterX, MOB);
+   }
+}
 
 
 
@@ -367,9 +400,11 @@ int main(){
 				// Inicializa o mapa
 		
 		//draw_player(st);
+		//draw_monster(st);
 		//draw_light(st);
 		//update(st);
 		move(st->player->playerX, st->player->playerY);
+		//move(st->monster->mosnterX, st->monster->monsterY);
 		update(st);
 		noecho();
 	}
