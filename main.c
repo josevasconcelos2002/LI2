@@ -38,7 +38,7 @@ typedef struct state {
 	MONSTER *monster;
 } STATE;
 
-
+//MONSTER monstros[10];
 
 
 void init_map(char map[ROWS][COLS]) {
@@ -306,9 +306,24 @@ int spawn_mob(STATE *st){
    }
 }
 */
-void update(STATE *st) {
-	int key = getch();
 
+bool only_dots = false;
+
+void desenha_pontos(char map[ROWS][COLS]) {
+    for(int i = 0; i < ROWS; i++) {
+        for(int j = 0; j < COLS; j++) {
+            if(only_dots && map[i][j] != '.') {
+                mvaddch(i, j, ' ');
+            } else {
+                mvaddch(i, j, map[i][j]);
+            }
+        }
+    }
+}
+
+
+void update(STATE *st,char map[ROWS][COLS]) {
+	int key = getch();
 	mvaddch(st->player->playerY,st->player->playerX, ' ');
 	switch(key) {
 		/*
@@ -336,7 +351,7 @@ void update(STATE *st) {
 		case 'a': if(valid_move(st,(int)'a')) do_movement_action(st, -1, +0); break;
 		case 'd': if(valid_move(st,(int)'d')) do_movement_action(st, +1, +0); break;
 		case 'k': kill(st); break;
-		case 'v': endwin(); exit(0); break; //altera o modo de visao
+		case 'v': only_dots =  !only_dots;  desenha_pontos(map); break; //altera o modo de visao
 		case 'q': endwin(); exit(0); break;
 	}
 
@@ -424,7 +439,7 @@ int main(){
 		//update(st);
 		move(st->player->playerX, st->player->playerY);
 		//move(st->monster->mosnterX, st->monster->monsterY);
-		update(st);
+		update(st,map);
 		noecho();
 	}
 	free(st->player);
