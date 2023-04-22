@@ -4,6 +4,7 @@
 #include <ncurses.h>
 #include <time.h>
 #include <stdbool.h>
+#include <string.h>
 #include "src/testeGeraMapa.h"
 //#include "player.h"
 //#include "state.h"
@@ -39,7 +40,7 @@ typedef struct state {
 } STATE;
 
 //MONSTER monstros[10];
-
+bool only_dots = false;
 
 void init_map(char map[ROWS][COLS]) {
     // Inicializa o mapa com caminhos e paredes aleatórios
@@ -175,13 +176,65 @@ void do_movement_action(STATE *st, int dx, int dy) {
 	st->player->playerX += dx;
 	st->player->playerY += dy;
 }
+/*
+void game_over() {
+    // Configura a janela
+    int height = 3; // altura da janela
+    int width = 10; // largura da janela
+    int starty = (LINES - height) / 2; // posição y da janela
+    int startx = (COLS - width) / 2; // posição x da janela
+    WINDOW *win = newwin(height, width, starty, startx); // cria a janela
+    box(win, 0, 0); // adiciona uma borda à janela
+    refresh();
+    wrefresh(win);
+
+    // Configura as cores
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(3, COLOR_BLUE, COLOR_BLACK);
+    wbkgd(win, COLOR_PAIR(1));
+
+    // Imprime a mensagem na janela
+    wattron(win, COLOR_PAIR(3));
+    mvwprintw(win, 1, 3, "GAME OVER");
+    wattroff(win, COLOR_PAIR(3));
+
+    // Espera 3 segundos antes de fechar a janela
+    wrefresh(win);
+    sleep(3);
+
+    // Libera a janela
+    delwin(win);
+    endwin();
+}
+*/
+
+
 
 void kill(STATE *st){
-	if(is_monster(mvinch(st->player->playerY,st->player->playerX+1))) st->monster->monsterHealth -= st->player->playerAtack; // como saber qual monster se está a referir?
-	if(is_monster(mvinch(st->player->playerY,st->player->playerX-1))) st->monster->monsterHealth -= st->player->playerAtack;
-	if(is_monster(mvinch(st->player->playerY+1,st->player->playerX))) st->monster->monsterHealth -= st->player->playerAtack;
-	if(is_monster(mvinch(st->player->playerY-1,st->player->playerX))) st->monster->monsterHealth -= st->player->playerAtack;
+	if(is_monster(mvinch(st->player->playerY,st->player->playerX+1))){
+		st->monster->monsterHealth -= st->player->playerAtack; // como saber qual monster se está a referir?
+		st->player->playerHealth -= st->monster->monsterAtack;
+	}
+	if(is_monster(mvinch(st->player->playerY,st->player->playerX-1))){
+		st->monster->monsterHealth -= st->player->playerAtack;
+		st->player->playerHealth -= st->monster->monsterAtack;
+	}
+	if(is_monster(mvinch(st->player->playerY+1,st->player->playerX))){
+		st->monster->monsterHealth -= st->player->playerAtack;
+		st->player->playerHealth -= st->monster->monsterAtack;
+	}
+	if(is_monster(mvinch(st->player->playerY-1,st->player->playerX))){
+		st->monster->monsterHealth -= st->player->playerAtack;
+		st->player->playerHealth -= st->monster->monsterAtack;
+	}
 	if(st->monster->monsterHealth <= 0) remove_monster(st);
+	/*if(st->player->playerHealth <= 0){
+		endwin();
+		game_over();
+	}
+	*/
 }
 
 bool is_parede(int key){
@@ -288,12 +341,20 @@ void draw_monster(STATE *st){
 	attroff(COLOR_PAIR(COLOR_RED));
 }
 
-bool valid_move(STATE *st,int key){
+bool valid_move(STATE *st,int key,char map[ROWS][COLS]){
 	bool r = true;
-	if(is_move_right(key) && (is_parede((int)mvinch(st->player->playerY, st->player->playerX+1)) || is_monster(mvinch(st->player->playerY, st->player->playerX+1)))) r = false;
-	if(is_move_left(key) && (is_parede((int)mvinch(st->player->playerY, st->player->playerX-1)) || is_monster(mvinch(st->player->playerY, st->player->playerX-1)))) r = false;
-	if(is_move_up(key) && (is_parede((int)mvinch(st->player->playerY-1, st->player->playerX)) || is_monster(mvinch(st->player->playerY-1, st->player->playerX)))) r = false;
-	if(is_move_down(key) && (is_parede((int)mvinch(st->player->playerY+1, st->player->playerX)) || is_monster(mvinch(st->player->playerY+1, st->player->playerX)))) r = false;
+	if(!only_dots){
+		if(is_move_right(key) && (is_parede((int)mvinch(st->player->playerY, st->player->playerX+1)) || is_monster(mvinch(st->player->playerY, st->player->playerX+1)))) r = false;
+		if(is_move_left(key) && (is_parede((int)mvinch(st->player->playerY, st->player->playerX-1)) || is_monster(mvinch(st->player->playerY, st->player->playerX-1)))) r = false;
+		if(is_move_up(key) && (is_parede((int)mvinch(st->player->playerY-1, st->player->playerX)) || is_monster(mvinch(st->player->playerY-1, st->player->playerX)))) r = false;
+		if(is_move_down(key) && (is_parede((int)mvinch(st->player->playerY+1, st->player->playerX)) || is_monster(mvinch(st->player->playerY+1, st->player->playerX)))) r = false;
+	}
+	else{
+		if(is_move_right(key) && (is_parede((int)map[st->player->playerY][st->player->playerX+1]))) r = false;
+		if(is_move_left(key) && (is_parede((int)map[st->player->playerY][st->player->playerX-1]))) r = false;
+		if(is_move_up(key) && (is_parede((int)map[st->player->playerY-1][st->player->playerX]))) r = false;
+		if(is_move_down(key) && (is_parede((int)map[st->player->playerY+1][st->player->playerX]))) r = false;
+	}
 	return r;
 }
 /*
@@ -307,16 +368,25 @@ int spawn_mob(STATE *st){
 }
 */
 
-bool only_dots = false;
+
 
 void desenha_pontos(char map[ROWS][COLS]) {
     for(int i = 0; i < ROWS; i++) {
         for(int j = 0; j < COLS; j++) {
-            if(only_dots && map[i][j] != '.') {
-                mvaddch(i, j, ' ');
-            } else {
-                mvaddch(i, j, map[i][j]);
-            }
+
+			if(only_dots){
+				if(mvinch(i,j) == '#'){
+					mvaddch(i,j,' ');
+				}
+			}
+			else{
+				if(map[i][j] == '#'){
+					mvaddch(i,j,map[i][j]);
+				}
+				else{
+					mvaddch(i,j,mvinch(i,j));
+				}
+			}
         }
     }
 }
@@ -346,10 +416,10 @@ void update(STATE *st,char map[ROWS][COLS]) {
 		case KEY_C3:
 		case '3': do_movement_action(st, +1, +1); break;
 		*/
-		case 'w': if(valid_move(st,(int)'w')) do_movement_action(st, +0, -1); break;
-		case 's': if(valid_move(st,(int)'s')) do_movement_action(st, +0, +1); break;
-		case 'a': if(valid_move(st,(int)'a')) do_movement_action(st, -1, +0); break;
-		case 'd': if(valid_move(st,(int)'d')) do_movement_action(st, +1, +0); break;
+		case 'w': if(valid_move(st,(int)'w',map)) do_movement_action(st, +0, -1); break;
+		case 's': if(valid_move(st,(int)'s',map)) do_movement_action(st, +0, +1); break;
+		case 'a': if(valid_move(st,(int)'a',map)) do_movement_action(st, -1, +0); break;
+		case 'd': if(valid_move(st,(int)'d',map)) do_movement_action(st, +1, +0); break;
 		case 'k': kill(st); break;
 		case 'v': only_dots =  !only_dots;  desenha_pontos(map); break; //altera o modo de visao
 		case 'q': endwin(); exit(0); break;
@@ -387,7 +457,7 @@ void inicializa(){
 
 int main(){
 	inicializa();
-	STATE *st = malloc(sizeof(STATE));;
+	STATE *st = malloc(sizeof(STATE));
 	inicializa_state(st);
 	WINDOW *wnd = initscr();
 	int ncols, nrows;
@@ -427,7 +497,7 @@ int main(){
 		if(st->monster != NULL){
 			printw("Mob state: \n");
 			printw("	Health: %d\n",st->monster->monsterHealth);
-			printw("	Atack: %d\n",st->monster->monsterAtack);
+			printw("	Atack: %d \n",st->monster->monsterAtack);
 		}
 		printw("(%d, %d) %d %d\n", st->player->playerX, st->player->playerY, ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
