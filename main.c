@@ -34,12 +34,13 @@ typedef struct monster{
 	int monsterAtack;
 } MONSTER;
 
+//MONSTER monstros[10];
 typedef struct state {
 	PLAYER *player;
-	MONSTER *monster;
+	MONSTER monstros[10];
 } STATE;
 
-//MONSTER monstros[10];
+
 bool only_dots = false;
 
 void init_map(char map[ROWS][COLS]) {
@@ -146,26 +147,26 @@ void inicializa_player(PLAYER *player){
 }
 
 
-void inicializa_monster(MONSTER *monster){
-	monster->monsterX = 25;
-    monster->monsterY = 25;
-    monster->monsterHealth = 50;
-    monster->monsterAtack = 5;
-
+void inicializa_monster(MONSTER monstros[],int N){
+	for(int i = 0; i<N ; i++){
+		monstros[i].monsterAtack = 5;
+		monstros[i].monsterHealth = 50;
+		monstros[i].monsterY = 35-i;
+		monstros[i].monsterX = 25 + 3*i;
+	}
 }
-
+/*
 void remove_monster(STATE *st){
 	int x = st->monster->monsterX;
 	int y = st->monster->monsterY;
 	mvaddch(y,x, ' ' | A_BOLD);
 	st->monster = NULL;
 }
-
+*/
 void inicializa_state(STATE *st){
 	st->player = malloc(sizeof(PLAYER));
 	inicializa_player(st->player);
-	st->monster = malloc(sizeof(MONSTER));
-	inicializa_monster(st->monster);
+	inicializa_monster(st->monstros,10);
 }
 
 /**
@@ -211,7 +212,7 @@ void game_over() {
 */
 
 
-
+/*
 void kill(STATE *st){
 	if(is_monster(mvinch(st->player->playerY,st->player->playerX+1))){
 		st->monster->monsterHealth -= st->player->playerAtack; // como saber qual monster se está a referir?
@@ -230,13 +231,13 @@ void kill(STATE *st){
 		st->player->playerHealth -= st->monster->monsterAtack;
 	}
 	if(st->monster->monsterHealth <= 0) remove_monster(st);
-	/*if(st->player->playerHealth <= 0){
+		if(st->player->playerHealth <= 0){
 		endwin();
 		game_over();
 	}
-	*/
-}
 
+}
+*/
 bool is_parede(int key){
 	return (key == 35);
 }
@@ -335,8 +336,10 @@ void draw_player(STATE *st){
 
 void draw_monster(STATE *st){
 	attron(COLOR_PAIR(COLOR_RED));
-	if(st->monster != NULL){
-		mvaddch(st->monster->monsterY, st->monster->monsterX, '!' | A_BOLD);
+	for(int i = 0; i<10 ; i++){
+		if(!is_parede(mvinch(st->monstros[i].monsterY,st->monstros[i].monsterX))){
+			mvaddch(st->monstros[i].monsterY, st->monstros[i].monsterX, '!' | A_BOLD);
+		}
 	}
 	attroff(COLOR_PAIR(COLOR_RED));
 }
@@ -357,16 +360,7 @@ bool valid_move(STATE *st,int key,char map[ROWS][COLS]){
 	}
 	return r;
 }
-/*
-int spawn_mob(STATE *st){
-	int i;
-	for (i = 0; i < 10; i++) {
-      	st->monster->monsterX = rand() % ROWS;
-      	st->monster->monsterY = rand() % COLS;
-      	mvaddch(MONSTER.monsterY, MONSTER.monsterX, MOB);
-   }
-}
-*/
+
 
 
 
@@ -521,33 +515,13 @@ void update(STATE *st,char map[ROWS][COLS]) {
 	int key = getch();
 	mvaddch(st->player->playerY,st->player->playerX, ' ');
 	switch(key) {
-		/*
-		case KEY_A1:
-		case '7': do_movement_action(st, -1, -1); break;
-		case KEY_UP:
-		case '8': do_movement_action(st, -1, +0); break;
-		case KEY_A3:
-		case '9': do_movement_action(st, -1, +1); break;
-		case KEY_LEFT:
-		case '4': do_movement_action(st, +0, -1); break;
-		case KEY_B2:
-		case '5': break;
-		case KEY_RIGHT:
-		case '6': do_movement_action(st, +0, +1); break;
-		case KEY_C1:
-		case '1': do_movement_action(st, +1, -1); break;
-		case KEY_DOWN:
-		case '2': do_movement_action(st, +1, +0); break;
-		case KEY_C3:
-		case '3': do_movement_action(st, +1, +1); break;
-		*/
 		case 'w': if(valid_move(st,(int)'w',map)) do_movement_action(st, +0, -1); break;
 		case 's': if(valid_move(st,(int)'s',map)) do_movement_action(st, +0, +1); break;
 		case 'a': if(valid_move(st,(int)'a',map)) do_movement_action(st, -1, +0); break;
 		case 'd': if(valid_move(st,(int)'d',map)) do_movement_action(st, +1, +0); break;
-		case 'k': kill(st); break;
+		//case 'k': kill(st); break;
 		case 'v': only_dots =  !only_dots;  desenha_pontos(map); break; //altera o modo de visao
-		case ' ': show_pause_menu(); break;
+		case ' ': show_pause_menu(); break; // espaco
 		case 'q': endwin(); exit(0); break;
 	}
 
@@ -616,10 +590,10 @@ int main(){
 	while(1) {
 		move(nrows - 1, 0);
 		attron(COLOR_PAIR(COLOR_BLUE));
-		if(st->monster != NULL){
-			printw("Mob state: \n");
-			printw("	Health: %d\n",st->monster->monsterHealth);
-			printw("	Atack: %d \n",st->monster->monsterAtack);
+		if(st->player != NULL){
+			printw("Player state: \n");
+			printw("	Health: %d\n",st->player->playerHealth);
+			printw("	Atack: %d \n",st->player->playerAtack);
 		}
 		printw("(%d, %d) %d %d\n", st->player->playerX, st->player->playerY, ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
