@@ -392,47 +392,6 @@ void desenha_pontos(char map[ROWS][COLS]) {
 }
 
 
-void update(STATE *st,char map[ROWS][COLS]) {
-	int key = getch();
-	mvaddch(st->player->playerY,st->player->playerX, ' ');
-	switch(key) {
-		/*
-		case KEY_A1:
-		case '7': do_movement_action(st, -1, -1); break;
-		case KEY_UP:
-		case '8': do_movement_action(st, -1, +0); break;
-		case KEY_A3:
-		case '9': do_movement_action(st, -1, +1); break;
-		case KEY_LEFT:
-		case '4': do_movement_action(st, +0, -1); break;
-		case KEY_B2:
-		case '5': break;
-		case KEY_RIGHT:
-		case '6': do_movement_action(st, +0, +1); break;
-		case KEY_C1:
-		case '1': do_movement_action(st, +1, -1); break;
-		case KEY_DOWN:
-		case '2': do_movement_action(st, +1, +0); break;
-		case KEY_C3:
-		case '3': do_movement_action(st, +1, +1); break;
-		*/
-		case 'w': if(valid_move(st,(int)'w',map)) do_movement_action(st, +0, -1); break;
-		case 's': if(valid_move(st,(int)'s',map)) do_movement_action(st, +0, +1); break;
-		case 'a': if(valid_move(st,(int)'a',map)) do_movement_action(st, -1, +0); break;
-		case 'd': if(valid_move(st,(int)'d',map)) do_movement_action(st, +1, +0); break;
-		case 'k': kill(st); break;
-		case 'v': only_dots =  !only_dots;  desenha_pontos(map); break; //altera o modo de visao
-		case 'q': endwin(); exit(0); break;
-	}
-
-	//spawn_mob(st);
-	draw_monster(st);
-	draw_player(st);
-	draw_light(st,key);
-	remove_light(st,key);
-}
-
-
 // Função para exibir o menu principal
 int show_main_menu() {
     clear(); // Limpa a tela
@@ -537,7 +496,7 @@ void show_pause_menu() {
             if (menu_choice == 0) {
                 return;
             } else if (menu_choice == 1) {
-                restart_game();
+                //restart_game();
                 return;
             } else if (menu_choice == 2) {
                 endwin();
@@ -557,6 +516,49 @@ void show_pause_menu() {
         refresh();
     }
 }
+
+void update(STATE *st,char map[ROWS][COLS]) {
+	int key = getch();
+	mvaddch(st->player->playerY,st->player->playerX, ' ');
+	switch(key) {
+		/*
+		case KEY_A1:
+		case '7': do_movement_action(st, -1, -1); break;
+		case KEY_UP:
+		case '8': do_movement_action(st, -1, +0); break;
+		case KEY_A3:
+		case '9': do_movement_action(st, -1, +1); break;
+		case KEY_LEFT:
+		case '4': do_movement_action(st, +0, -1); break;
+		case KEY_B2:
+		case '5': break;
+		case KEY_RIGHT:
+		case '6': do_movement_action(st, +0, +1); break;
+		case KEY_C1:
+		case '1': do_movement_action(st, +1, -1); break;
+		case KEY_DOWN:
+		case '2': do_movement_action(st, +1, +0); break;
+		case KEY_C3:
+		case '3': do_movement_action(st, +1, +1); break;
+		*/
+		case 'w': if(valid_move(st,(int)'w',map)) do_movement_action(st, +0, -1); break;
+		case 's': if(valid_move(st,(int)'s',map)) do_movement_action(st, +0, +1); break;
+		case 'a': if(valid_move(st,(int)'a',map)) do_movement_action(st, -1, +0); break;
+		case 'd': if(valid_move(st,(int)'d',map)) do_movement_action(st, +1, +0); break;
+		case 'k': kill(st); break;
+		case 'v': only_dots =  !only_dots;  desenha_pontos(map); break; //altera o modo de visao
+		case ' ': show_pause_menu(); break;
+		case 'q': endwin(); exit(0); break;
+	}
+
+	//spawn_mob(st);
+	draw_monster(st);
+	draw_player(st);
+	draw_light(st,key);
+	remove_light(st,key);
+}
+
+
 
 void inicializa(){
 	srandom(time(NULL));
@@ -581,6 +583,7 @@ int main(){
 	WINDOW *wnd = initscr();
 	int ncols, nrows;
 	getmaxyx(wnd,nrows,ncols);
+	show_main_menu();
 	char map[ROWS][COLS];
 		init_map(map);
 
