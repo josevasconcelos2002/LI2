@@ -151,8 +151,8 @@ void inicializa_monster(MONSTER monstros[],int N){
 	for(int i = 0; i<N ; i++){
 		monstros[i].monsterAtack = 5;
 		monstros[i].monsterHealth = 50;
-		monstros[i].monsterY = 35-i;
-		monstros[i].monsterX = 25 + 3*i;
+		monstros[i].monsterY = 15+ 3*i;
+		monstros[i].monsterX = 25 + 5*i;
 	}
 }
 /*
