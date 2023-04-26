@@ -275,7 +275,7 @@ void remove_light(STATE *st, char key){
 
 void draw_light(STATE *st, char key){
 	if(is_move_left((int)key)){
-		attron(COLOR_PAIR(COLOR_YELLOW));
+			attron(COLOR_PAIR(COLOR_YELLOW));
 		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ - 3, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ -3, '.' | A_BOLD);
@@ -285,10 +285,10 @@ void draw_light(STATE *st, char key){
 		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ - 2, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ -2, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/-1, '.' | A_BOLD);
-		attroff(COLOR_PAIR(COLOR_YELLOW));
+			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_up((int)key)){
-		attron(COLOR_PAIR(COLOR_YELLOW));
+			attron(COLOR_PAIR(COLOR_YELLOW));
 		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ -3,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 3,  st->player->playerX/*get_playerY(get_player(st))*/ - 1, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ -3,  st->player->playerX/*get_playerY(get_player(st))*/ +1, '.' | A_BOLD);
@@ -298,10 +298,10 @@ void draw_light(STATE *st, char key){
 		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 2,  st->player->playerX/*get_playerY(get_player(st))*/ - 1, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ -2,  st->player->playerX/*get_playerY(get_player(st))*/ +1, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/-1,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
-		attroff(COLOR_PAIR(COLOR_YELLOW));
+			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_right((int)key)){
-		attron(COLOR_PAIR(COLOR_YELLOW));
+			attron(COLOR_PAIR(COLOR_YELLOW));
 		if(!is_parede(mvinch(st->player->playerY, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY, st->player->playerX+3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/+3, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ +3, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ +3, '.' | A_BOLD);
@@ -311,10 +311,10 @@ void draw_light(STATE *st, char key){
 		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ +2, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ +2, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/+1, '.' | A_BOLD);
-		attroff(COLOR_PAIR(COLOR_YELLOW));
+			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_down((int)key)){
-		attron(COLOR_PAIR(COLOR_YELLOW));
+			attron(COLOR_PAIR(COLOR_YELLOW));
 		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +3,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +3,  st->player->playerX/*get_playerY(get_player(st))*/ -1, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +3,  st->player->playerX/*get_playerY(get_player(st))*/ +1, '.' | A_BOLD);
@@ -324,24 +324,26 @@ void draw_light(STATE *st, char key){
 		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +2,  st->player->playerX/*get_playerY(get_player(st))*/ -1, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +2,  st->player->playerX/*get_playerY(get_player(st))*/ +1, '.' | A_BOLD);
 		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/+1,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
-		attroff(COLOR_PAIR(COLOR_YELLOW));
+			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 }
 
 void draw_player(STATE *st){
-	attron(COLOR_PAIR(COLOR_WHITE));
+		attron(COLOR_PAIR(COLOR_WHITE));
     mvaddch(st->player->playerY, st->player->playerX, '@' | A_BOLD);
-    attroff(COLOR_PAIR(COLOR_WHITE));
+    	attroff(COLOR_PAIR(COLOR_WHITE));
+		refresh();
 }
 
 void draw_monster(STATE *st){
-	attron(COLOR_PAIR(COLOR_RED));
+		attron(COLOR_PAIR(1));
 	for(int i = 0; i<10 ; i++){
 		if(!is_parede(mvinch(st->monstros[i].monsterY,st->monstros[i].monsterX))){
 			mvaddch(st->monstros[i].monsterY, st->monstros[i].monsterX, '!' | A_BOLD);
 		}
 	}
-	attroff(COLOR_PAIR(COLOR_RED));
+		attroff(COLOR_PAIR(1));
+	refresh();
 }
 
 bool valid_move(STATE *st,int key,char map[ROWS][COLS]){
@@ -529,6 +531,7 @@ void update(STATE *st,char map[ROWS][COLS]) {
 	draw_monster(st);
 	draw_player(st);
 	draw_light(st,key);
+	refresh();
 	remove_light(st,key);
 }
 
@@ -547,6 +550,8 @@ void inicializa(){
 	init_pair(COLOR_WHITE, COLOR_WHITE, COLOR_BLACK);
     init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
+	init_pair(1,COLOR_RED,COLOR_BLACK);
+	//init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
 }
 
 
@@ -597,6 +602,7 @@ int main(){
 		}
 		printw("(%d, %d) %d %d\n", st->player->playerX, st->player->playerY, ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
+		refresh();
 				// Inicializa o mapa
 		
 		//draw_player(st);
