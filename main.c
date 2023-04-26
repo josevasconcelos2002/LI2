@@ -76,6 +76,7 @@ void update_map(char map[ROWS][COLS]) {
             } else {
                 new_map[i][j] = ' ';
             }
+			if(map[i][j] == '.') new_map[i][j] = '.';
         }
     }
     // Copia o novo mapa para o original
@@ -173,9 +174,10 @@ void inicializa_state(STATE *st){
  *
  * Um pequeno exemplo que mostra o que se pode fazer
  */
-void do_movement_action(STATE *st, int dx, int dy) {
+void do_movement_action(STATE *st, int dx, int dy,char map[ROWS][COLS]) {
 	st->player->playerX += dx;
 	st->player->playerY += dy;
+	map[st->player->playerY-dy][st->player->playerX-dx] = ' ';
 }
 /*
 void game_over() {
@@ -258,91 +260,139 @@ bool is_move_down(int key){
 	return key == 115;
 }
 
-void remove_light(STATE *st, char key){
+void remove_light(STATE *st, char key, char map[ROWS][COLS]){
 	if(is_move_left((int)key)){
-		if(mvinch(st->player->playerY, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
-		if(mvinch(st->player->playerY-1, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ -1,  st->player->playerX-1/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
-		if(mvinch(st->player->playerY+1, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/+1 ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
-		if(mvinch(st->player->playerY-2, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/-2 ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
-		if(mvinch(st->player->playerY+2, st->player->playerX-3) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/+2 ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '~' | A_BOLD);
-		if(mvinch(st->player->playerY, st->player->playerX-2) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-2, '~' | A_BOLD);
-		if(mvinch(st->player->playerY-1, st->player->playerX-2) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/-1 ,  st->player->playerX/*get_playerY(get_player(st))*/-2, '~' | A_BOLD);
-		if(mvinch(st->player->playerY+1, st->player->playerX-2) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/-2, '~' | A_BOLD);
-		if(mvinch(st->player->playerY, st->player->playerX-1) == '.') mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-1, '~' | A_BOLD);
+		if(mvinch(st->player->playerY, st->player->playerX-3) == '.') map[st->player->playerY][st->player->playerX-3] =  ' ';
+		if(mvinch(st->player->playerY-1, st->player->playerX-3) == '.') map[st->player->playerY-1][st->player->playerX-3] =  ' ';
+		if(mvinch(st->player->playerY+1, st->player->playerX-3) == '.') map[st->player->playerY+1][st->player->playerX-3] =  ' ';
+		if(mvinch(st->player->playerY-2, st->player->playerX-3) == '.') map[st->player->playerY-2][st->player->playerX-3] =  ' ';
+		if(mvinch(st->player->playerY+2, st->player->playerX-3) == '.') map[st->player->playerY+2][st->player->playerX-3] =  ' ';
+		if(mvinch(st->player->playerY, st->player->playerX-2) == '.') map[st->player->playerY][st->player->playerX-2] =  ' ';
+		if(mvinch(st->player->playerY-1, st->player->playerX-2) == '.') map[st->player->playerY-1][st->player->playerX-2] =  ' ';
+		if(mvinch(st->player->playerY+1, st->player->playerX-2) == '.') map[st->player->playerY+1][st->player->playerX-2] =  ' ';
+		if(mvinch(st->player->playerY, st->player->playerX-1) == '.') map[st->player->playerY][st->player->playerX-1] =  ' ';
+	}
+	if(is_move_up((int)key)){
+		if(mvinch(st->player->playerY-3, st->player->playerX) == '.') map[st->player->playerY-3][st->player->playerX] =  ' ';
+		if(mvinch(st->player->playerY-3, st->player->playerX-1) == '.') map[st->player->playerY-3][st->player->playerX-1] =  ' ';
+		if(mvinch(st->player->playerY-3, st->player->playerX+1) == '.') map[st->player->playerY-3][st->player->playerX+1] =  ' ';
+		if(mvinch(st->player->playerY-3, st->player->playerX-2) == '.') map[st->player->playerY-3][st->player->playerX-2] =  ' ';
+		if(mvinch(st->player->playerY-3, st->player->playerX+2) == '.') map[st->player->playerY-3][st->player->playerX+2] =  ' ';
+		if(mvinch(st->player->playerY-2, st->player->playerX) == '.') map[st->player->playerY-2][st->player->playerX] =  ' ';
+		if(mvinch(st->player->playerY-2, st->player->playerX-1) == '.') map[st->player->playerY-2][st->player->playerX-2] =  ' ';
+		if(mvinch(st->player->playerY-2, st->player->playerX+1) == '.') map[st->player->playerY-2][st->player->playerX+1] =  ' ';
+		if(mvinch(st->player->playerY-1, st->player->playerX) == '.') map[st->player->playerY-1][st->player->playerX] =  ' ';
+	}
+	if(is_move_right((int)key)){
+		if(mvinch(st->player->playerY, st->player->playerX+3) == '.') map[st->player->playerY][st->player->playerX+3] =  ' ';
+		if(mvinch(st->player->playerY-1, st->player->playerX+3) == '.') map[st->player->playerY-1][st->player->playerX+3] =  ' ';
+		if(mvinch(st->player->playerY+1, st->player->playerX+3) == '.') map[st->player->playerY+1][st->player->playerX+3] =  ' ';
+		if(mvinch(st->player->playerY-2, st->player->playerX+3) == '.') map[st->player->playerY-2][st->player->playerX+3] =  ' ';
+		if(mvinch(st->player->playerY+2, st->player->playerX+3) == '.') map[st->player->playerY+2][st->player->playerX+3] =  ' ';
+		if(mvinch(st->player->playerY, st->player->playerX+2) == '.') map[st->player->playerY][st->player->playerX+2] =  ' ';
+		if(mvinch(st->player->playerY-1, st->player->playerX+2) == '.') map[st->player->playerY-1][st->player->playerX+2] =  ' ';
+		if(mvinch(st->player->playerY+1, st->player->playerX+2) == '.') map[st->player->playerY+1][st->player->playerX+2] =  ' ';
+		if(mvinch(st->player->playerY, st->player->playerX+1) == '.') map[st->player->playerY][st->player->playerX+1] =  ' ';
+	}
+	if(is_move_down((int)key)){
+		if(mvinch(st->player->playerY+3, st->player->playerX) == '.') map[st->player->playerY+3][st->player->playerX] =  ' ';
+		if(mvinch(st->player->playerY+3, st->player->playerX-1) == '.') map[st->player->playerY+3][st->player->playerX-1] =  ' ';
+		if(mvinch(st->player->playerY+3, st->player->playerX+1) == '.') map[st->player->playerY+3][st->player->playerX+1] =  ' ';
+		if(mvinch(st->player->playerY+3, st->player->playerX-2) == '.') map[st->player->playerY+3][st->player->playerX-2] =  ' ';
+		if(mvinch(st->player->playerY+3, st->player->playerX+2) == '.') map[st->player->playerY+3][st->player->playerX+2] =  ' ';
+		if(mvinch(st->player->playerY+2, st->player->playerX) == '.') map[st->player->playerY+2][st->player->playerX] =  ' ';
+		if(mvinch(st->player->playerY+2, st->player->playerX-1) == '.') map[st->player->playerY+2][st->player->playerX-1] =  ' ';
+		if(mvinch(st->player->playerY+2, st->player->playerX+1) == '.') map[st->player->playerY+2][st->player->playerX+1] =  ' ';
+		if(mvinch(st->player->playerY+1, st->player->playerX) == '.') map[st->player->playerY+1][st->player->playerX] =  ' ';
+	}
+	for(int i = 0; i<ROWS ; i++){
+		for(int j = 0; j<COLS; j++){
+			if(map[i][j] == ' ') mvaddch(i,j,' ');
+		}
 	}
 }
 
 
-void draw_light(STATE *st, char key){
+void draw_light(STATE *st, char key, char map[ROWS][COLS]){
 	if(is_move_left((int)key)){
 			attron(COLOR_PAIR(COLOR_YELLOW));
-		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/-3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ - 3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ -3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 2,  st->player->playerX/*get_playerY(get_player(st))*/ - 3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX-3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ + 2,  st->player->playerX/*get_playerY(get_player(st))*/ -3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/-2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ - 2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ -2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/-1, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY, st->player->playerX-3))) map[st->player->playerY][st->player->playerX-3] = '.';
+		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX-3))) map[st->player->playerY-1][st->player->playerX-3] = '.';
+		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX-3))) map[st->player->playerY+1][st->player->playerX-3] = '.';
+		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX-3))) map[st->player->playerY-2][st->player->playerX-3] = '.';
+		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX-3))) map[st->player->playerY+2][st->player->playerX-3] = '.';
+		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY, st->player->playerX-2))) map[st->player->playerY][st->player->playerX-2] = '.';
+		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX-2))) map[st->player->playerY-1][st->player->playerX-2] = '.';
+		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX-2))) map[st->player->playerY+1][st->player->playerX-2] = '.';
+		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY, st->player->playerX-1))) map[st->player->playerY][st->player->playerX-1] = '.';
 			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_up((int)key)){
 			attron(COLOR_PAIR(COLOR_YELLOW));
-		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ -3,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 3,  st->player->playerX/*get_playerY(get_player(st))*/ - 1, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ -3,  st->player->playerX/*get_playerY(get_player(st))*/ +1, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 3,  st->player->playerX/*get_playerY(get_player(st))*/ - 2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX+2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ -3,  st->player->playerX/*get_playerY(get_player(st))*/ +2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/-2,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 2,  st->player->playerX/*get_playerY(get_player(st))*/ - 1, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ -2,  st->player->playerX/*get_playerY(get_player(st))*/ +1, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/-1,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX))) map[st->player->playerY-3][st->player->playerX] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX-1))) map[st->player->playerY-3][st->player->playerX-1] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX+1))) map[st->player->playerY-3][st->player->playerX+1] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX-2))) map[st->player->playerY-3][st->player->playerX-2] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-3, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY-3, st->player->playerX+2))) map[st->player->playerY-3][st->player->playerX+2] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX))) map[st->player->playerY-2][st->player->playerX] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX-1))) map[st->player->playerY-2][st->player->playerX-1] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX+1))) map[st->player->playerY-2][st->player->playerX+1] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX))) map[st->player->playerY-1][st->player->playerX] =  '.';
 			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_right((int)key)){
 			attron(COLOR_PAIR(COLOR_YELLOW));
-		if(!is_parede(mvinch(st->player->playerY, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY, st->player->playerX+3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ ,  st->player->playerX/*get_playerY(get_player(st))*/+3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ +3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ +3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX+3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 2,  st->player->playerX/*get_playerY(get_player(st))*/ +3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX+3))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ + 2,  st->player->playerX/*get_playerY(get_player(st))*/ +3, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY, st->player->playerX+2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/+2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ - 1,  st->player->playerX/*get_playerY(get_player(st))*/ +2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +1,  st->player->playerX/*get_playerY(get_player(st))*/ +2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/,  st->player->playerX/*get_playerY(get_player(st))*/+1, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY, st->player->playerX+3))) map[st->player->playerY][st->player->playerX+3] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX+3))) map[st->player->playerY-1][st->player->playerX+3] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+3))) map[st->player->playerY+1][st->player->playerX+3] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-2, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY-2, st->player->playerX+3))) map[st->player->playerY-2][st->player->playerX+3] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX+3)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX+3))) map[st->player->playerY+2][st->player->playerX+3] =  '.';
+		if(!is_parede(mvinch(st->player->playerY, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY, st->player->playerX+2))) map[st->player->playerY][st->player->playerX+2] =  '.';
+		if(!is_parede(mvinch(st->player->playerY-1, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY-1, st->player->playerX+2))) map[st->player->playerY-1][st->player->playerX+2] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX+2))) map[st->player->playerY+1][st->player->playerX+2] =  '.';
+		if(!is_parede(mvinch(st->player->playerY, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY, st->player->playerX+1))) map[st->player->playerY][st->player->playerX+1] =  '.';
 			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_down((int)key)){
 			attron(COLOR_PAIR(COLOR_YELLOW));
-		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +3,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +3,  st->player->playerX/*get_playerY(get_player(st))*/ -1, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +3,  st->player->playerX/*get_playerY(get_player(st))*/ +1, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX-2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +3,  st->player->playerX/*get_playerY(get_player(st))*/ -2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX+2))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +3,  st->player->playerX/*get_playerY(get_player(st))*/ +2, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/+2,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX-1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +2,  st->player->playerX/*get_playerY(get_player(st))*/ -1, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX+1))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/ +2,  st->player->playerX/*get_playerY(get_player(st))*/ +1, '.' | A_BOLD);
-		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX))) mvaddch(st->player->playerY/*get_playerX(get_player(st))*/+1,  st->player->playerX/*get_playerY(get_player(st))*/, '.' | A_BOLD);
+		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX))) map[st->player->playerY+3][st->player->playerX] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX-1))) map[st->player->playerY+3][st->player->playerX-1] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX+1))) map[st->player->playerY+3][st->player->playerX+1] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX-2)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX-2))) map[st->player->playerY+3][st->player->playerX-2] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+3, st->player->playerX+2)) && !is_monster(mvinch(st->player->playerY+3, st->player->playerX+2))) map[st->player->playerY+3][st->player->playerX+2] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX))) map[st->player->playerY+2][st->player->playerX] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX-1)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX-1))) map[st->player->playerY+2][st->player->playerX-1] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+2, st->player->playerX+1)) && !is_monster(mvinch(st->player->playerY+2, st->player->playerX+1))) map[st->player->playerY+2][st->player->playerX+1] =  '.';
+		if(!is_parede(mvinch(st->player->playerY+1, st->player->playerX)) && !is_monster(mvinch(st->player->playerY+1, st->player->playerX))) map[st->player->playerY+1][st->player->playerX] =  '.';
 			attroff(COLOR_PAIR(COLOR_YELLOW));
+	}
+	for(int i = 0; i<ROWS ; i++){
+		for(int j = 0; j<COLS; j++){
+			if(map[i][j] == '.') mvaddch(i,j,'.');
+		}
 	}
 }
 
-void draw_player(STATE *st){
-		attron(COLOR_PAIR(COLOR_WHITE));
-    mvaddch(st->player->playerY, st->player->playerX, '@' | A_BOLD);
-    	attroff(COLOR_PAIR(COLOR_WHITE));
-		refresh();
+void draw_player(STATE *st,char map[ROWS][COLS]){
+	attron(COLOR_PAIR(COLOR_WHITE));
+	map[st->player->playerY][st->player->playerX] = '@';
+    for(int i = 0; i<ROWS ; i++){
+		for(int j = 0; j<COLS; j++){
+			if(map[i][j] == '@') mvaddch(i,j,'@');
+		}
+	}
+    attroff(COLOR_PAIR(COLOR_WHITE));
+	refresh();
 }
 
 void draw_monster(STATE *st){
-		attron(COLOR_PAIR(1));
+	attron(COLOR_PAIR(1));
 	for(int i = 0; i<10 ; i++){
 		if(!is_parede(mvinch(st->monstros[i].monsterY,st->monstros[i].monsterX))){
 			mvaddch(st->monstros[i].monsterY, st->monstros[i].monsterX, '!' | A_BOLD);
 		}
 	}
-		attroff(COLOR_PAIR(1));
+	attroff(COLOR_PAIR(1));
 	refresh();
 }
 
@@ -516,11 +566,12 @@ void show_pause_menu() {
 void update(STATE *st,char map[ROWS][COLS]) {
 	int key = getch();
 	mvaddch(st->player->playerY,st->player->playerX, ' ');
+	remove_light(st,key,map);
 	switch(key) {
-		case 'w': if(valid_move(st,(int)'w',map)) do_movement_action(st, +0, -1); break;
-		case 's': if(valid_move(st,(int)'s',map)) do_movement_action(st, +0, +1); break;
-		case 'a': if(valid_move(st,(int)'a',map)) do_movement_action(st, -1, +0); break;
-		case 'd': if(valid_move(st,(int)'d',map)) do_movement_action(st, +1, +0); break;
+		case 'w': if(valid_move(st,(int)'w',map)) do_movement_action(st, +0, -1,map); break;
+		case 's': if(valid_move(st,(int)'s',map)) do_movement_action(st, +0, +1,map); break;
+		case 'a': if(valid_move(st,(int)'a',map)) do_movement_action(st, -1, +0,map); break;
+		case 'd': if(valid_move(st,(int)'d',map)) do_movement_action(st, +1, +0,map); break;
 		//case 'k': kill(st); break;
 		case 'v': only_dots =  !only_dots;  desenha_pontos(map); break; //altera o modo de visao
 		case ' ': show_pause_menu(); break; // espaco
@@ -529,15 +580,12 @@ void update(STATE *st,char map[ROWS][COLS]) {
 
 	//spawn_mob(st);
 	draw_monster(st);
-	draw_player(st);
-	draw_light(st,key);
+	draw_player(st,map);
+	draw_light(st,key,map);
 	refresh();
-	remove_light(st,key);
 }
 
-
-
-void inicializa(){
+int main(){
 	srandom(time(NULL));
 	start_color();
 
@@ -551,18 +599,12 @@ void inicializa(){
     init_pair(COLOR_YELLOW, COLOR_YELLOW, COLOR_BLACK);
     init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
 	init_pair(1,COLOR_RED,COLOR_BLACK);
-	//init_pair(COLOR_RED, COLOR_RED, COLOR_BLACK);
-}
-
-
-int main(){
-	inicializa();
 	STATE *st = malloc(sizeof(STATE));
 	inicializa_state(st);
 	WINDOW *wnd = initscr();
 	int ncols, nrows;
 	getmaxyx(wnd,nrows,ncols);
-	show_main_menu();
+	//show_main_menu();
 	char map[ROWS][COLS];
 	do{
 		memset(map, ' ', ROWS * COLS * sizeof(char));
