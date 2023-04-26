@@ -564,8 +564,10 @@ int main(){
 	getmaxyx(wnd,nrows,ncols);
 	show_main_menu();
 	char map[ROWS][COLS];
+	do{
+		memset(map, ' ', ROWS * COLS * sizeof(char));
 		init_map(map);
-
+		// Limpa o mapa
 		// Faz update no mapa
 		for (int i = 0; i < ITERATIONS; i++) {
 			update_map(map);
@@ -583,7 +585,11 @@ int main(){
 			map[0][j] = '#';
 			map[ROWS-1][j] = '#';
 		}
+	}
+	while(is_parede((int)mvinch(st->player->playerY,st->player->playerX)));
 
+
+		//clear();
 		// Desenha o mapa no ecra
 		clear();
 		for (int i = 0; i < ROWS; i++) {
