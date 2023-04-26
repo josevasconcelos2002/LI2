@@ -385,10 +385,11 @@ void draw_player(STATE *st,char map[ROWS][COLS]){
 	refresh();
 }
 
-void draw_monster(STATE *st){
+void draw_monster(STATE *st, char map[ROWS][COLS]){
 	attron(COLOR_PAIR(1));
 	for(int i = 0; i<10 ; i++){
-		if(!is_parede(mvinch(st->monstros[i].monsterY,st->monstros[i].monsterX))){
+		if(!is_parede(map[st->monstros[i].monsterY][st->monstros[i].monsterX])){
+			map[st->monstros[i].monsterY][st->monstros[i].monsterX] = '!';
 			mvaddch(st->monstros[i].monsterY, st->monstros[i].monsterX, '!' | A_BOLD);
 		}
 	}
@@ -399,10 +400,10 @@ void draw_monster(STATE *st){
 bool valid_move(STATE *st,int key,char map[ROWS][COLS]){
 	bool r = true;
 	if(!only_dots){
-		if(is_move_right(key) && (is_parede((int)mvinch(st->player->playerY, st->player->playerX+1)) || is_monster(mvinch(st->player->playerY, st->player->playerX+1)))) r = false;
-		if(is_move_left(key) && (is_parede((int)mvinch(st->player->playerY, st->player->playerX-1)) || is_monster(mvinch(st->player->playerY, st->player->playerX-1)))) r = false;
-		if(is_move_up(key) && (is_parede((int)mvinch(st->player->playerY-1, st->player->playerX)) || is_monster(mvinch(st->player->playerY-1, st->player->playerX)))) r = false;
-		if(is_move_down(key) && (is_parede((int)mvinch(st->player->playerY+1, st->player->playerX)) || is_monster(mvinch(st->player->playerY+1, st->player->playerX)))) r = false;
+		if((is_move_right(key) && (is_parede((int)map[st->player->playerY][st->player->playerX+1]))) || is_monster(map[st->player->playerY][st->player->playerX+1])) r = false;
+		if((is_move_left(key) && (is_parede((int)map[st->player->playerY][st->player->playerX-1]))) || is_monster(map[st->player->playerY][st->player->playerX-1])) r = false;
+		if((is_move_up(key) && (is_parede((int)map[st->player->playerY-1][st->player->playerX]))) || is_monster(map[st->player->playerY-1][st->player->playerX])) r = false;
+		if((is_move_down(key) && (is_parede((int)map[st->player->playerY+1][st->player->playerX]))) || is_monster(map[st->player->playerY+1][st->player->playerX])) r = false;
 	}
 	else{
 		if(is_move_right(key) && (is_parede((int)map[st->player->playerY][st->player->playerX+1]))) r = false;
@@ -421,16 +422,17 @@ void desenha_pontos(char map[ROWS][COLS]) {
         for(int j = 0; j < COLS; j++) {
 
 			if(only_dots){
-				if(mvinch(i,j) == '#'){
+				if(map[i][j] == '#'){
 					mvaddch(i,j,' ');
+				}
+				if(map[i][j] == '.' && mvinch(i,j) == '!') mvaddch(i,j,'!');
+				else if(map[i][j] == '.'){
+					mvaddch(i,j,'.');
 				}
 			}
 			else{
 				if(map[i][j] == '#'){
 					mvaddch(i,j,map[i][j]);
-				}
-				else{
-					mvaddch(i,j,mvinch(i,j));
 				}
 			}
         }
@@ -579,7 +581,7 @@ void update(STATE *st,char map[ROWS][COLS]) {
 	}
 
 	//spawn_mob(st);
-	draw_monster(st);
+	draw_monster(st,map);
 	draw_player(st,map);
 	draw_light(st,key,map);
 	refresh();
@@ -604,7 +606,7 @@ int main(){
 	WINDOW *wnd = initscr();
 	int ncols, nrows;
 	getmaxyx(wnd,nrows,ncols);
-	//show_main_menu();
+	show_main_menu();
 	char map[ROWS][COLS];
 	do{
 		memset(map, ' ', ROWS * COLS * sizeof(char));
