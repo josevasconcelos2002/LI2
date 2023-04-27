@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "ncurses.h": "c"
+        "ncurses.h": "c",
+        "testegeramapa.h": "c"
     }
 }

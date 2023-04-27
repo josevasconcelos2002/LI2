@@ -3,7 +3,12 @@
 
 #include "state.h"
 
-typedef struct player PLAYER;
+typedef struct player{
+	int playerX;
+	int playerY;
+	int playerHealth;
+	int playerAtack;
+} PLAYER;
 
 int get_playerX(PLAYER *player);
 
@@ -22,5 +27,13 @@ void set_playerHealth(PLAYER *player, int health);
 void set_playerAtack(PLAYER *player, int atack);
 
 void inicializa_player(PLAYER *player);
+
+/*void kill(STATE *st);*/
+
+void draw_light(STATE *st, char key, char map[ROWS][COLS]);
+
+void remove_light(STATE *st, char key, char map[ROWS][COLS]);
+
+void draw_player(STATE *st,char map[ROWS][COLS]);
 
 #endif
