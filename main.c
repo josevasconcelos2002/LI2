@@ -11,32 +11,9 @@
 #include "testeGeraMapa.h"
 #include "menus.h"
 
+
+
 bool only_dots = false;
-
-
-
-
-void update(STATE *st,char map[ROWS][COLS]) {
-	int key = getch();
-	mvaddch(st->player->playerY,st->player->playerX, ' ');
-	remove_light(st,key,map);
-	switch(key) {
-		case 'w': if(valid_move(st,(int)'w',map)) do_movement_action(st, +0, -1,map); break;
-		case 's': if(valid_move(st,(int)'s',map)) do_movement_action(st, +0, +1,map); break;
-		case 'a': if(valid_move(st,(int)'a',map)) do_movement_action(st, -1, +0,map); break;
-		case 'd': if(valid_move(st,(int)'d',map)) do_movement_action(st, +1, +0,map); break;
-		//case 'k': kill(st); break;
-		case 'v': only_dots =  !only_dots;  desenha_pontos(map); break; //altera o modo de visao
-		case ' ': show_pause_menu(); break; // espaco
-		case 'q': endwin(); exit(0); break;
-	}
-
-	//spawn_mob(st);
-	draw_monster(st,map);
-	draw_player(st,map);
-	draw_light(st,key,map);
-	refresh();
-}
 
 int main(){
 	srandom(time(NULL));
@@ -53,6 +30,8 @@ int main(){
     init_pair(COLOR_BLUE, COLOR_BLUE, COLOR_BLACK);
 	init_pair(1,COLOR_RED,COLOR_BLACK);
 	STATE *st = malloc(sizeof(STATE));
+	st->player = malloc(sizeof(PLAYER));
+	//st->monstros = malloc(sizeof(MONSTER)*10);
 	inicializa_state(st);
 	WINDOW *wnd = initscr();
 	int ncols, nrows;
@@ -81,37 +60,25 @@ int main(){
 			map[ROWS-1][j] = '#';
 		}
 	}
-	while(is_parede((int)mvinch(st->player->playerY,st->player->playerX)));
-
-
-		//clear();
-		// Desenha o mapa no ecra
-		clear();
-		for (int i = 0; i < ROWS; i++) {
-			for (int j = 0; j < COLS; j++) {
-				mvaddch(i, j, map[i][j]);
-			}
+	while(is_parede((int)mvinch(get_playerY(st->player),get_playerX(st->player))));
+	clear();
+	for (int i = 0; i < ROWS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			mvaddch(i, j, map[i][j]);
 		}
-		//refresh();
+	}
 	while(1) {
 		move(nrows - 1, 0);
 		attron(COLOR_PAIR(COLOR_BLUE));
 		if(st->player != NULL){
 			printw("Player state: \n");
-			printw("	Health: %d\n",st->player->playerHealth);
-			printw("	Atack: %d \n",st->player->playerAtack);
+			printw("	Health: %d\n",get_playerHealth(st->player));
+			printw("	Atack: %d \n",get_playerAtack(st->player));
 		}
-		printw("(%d, %d) %d %d\n", st->player->playerX, st->player->playerY, ncols, nrows);
+		printw("(%d, %d) %d %d\n", get_playerX(st->player), get_playerY(st->player), ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
 		refresh();
-				// Inicializa o mapa
-		
-		//draw_player(st);
-		//draw_monster(st);
-		//draw_light(st);
-		//update(st);
-		move(st->player->playerX, st->player->playerY);
-		//move(st->monster->mosnterX, st->monster->monsterY);
+		move(get_playerY(st->player), get_playerX(st->player));
 		update(st,map);
 		noecho();
 	}

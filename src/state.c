@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+
+
 void inicializa_state(STATE *st){
 	st->player = malloc(sizeof(PLAYER));
 	inicializa_player(st->player);

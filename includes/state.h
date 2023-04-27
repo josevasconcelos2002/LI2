@@ -1,8 +1,10 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "player.h"
+#include "testeGeraMapa.h"
 #include "monsters.h"
+#include "player.h"
+
 typedef struct state {
 	PLAYER *player;
 	MONSTER monstros[10];

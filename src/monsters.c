@@ -4,6 +4,8 @@
 #include <ncurses.h>
 #include "testeGeraMapa.h"
 
+
+
 void set_monsterX(MONSTER *monster, int x){
     monster->monsterX = x;
 }
