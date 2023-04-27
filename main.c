@@ -12,9 +12,6 @@
 #include "menus.h"
 
 
-
-bool only_dots = false;
-
 int main(){
 	srandom(time(NULL));
 	start_color();

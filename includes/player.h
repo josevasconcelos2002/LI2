@@ -30,10 +30,10 @@ void inicializa_player(PLAYER *player);
 
 /*void kill(STATE *st);*/
 
-void draw_light(STATE *st, char key, char map[ROWS][COLS]);
+void draw_light(STATE *st, char key, char map[ROWS][COL]);
 
-void remove_light(STATE *st, char key, char map[ROWS][COLS]);
+void remove_light(STATE *st, char key, char map[ROWS][COL]);
 
-void draw_player(STATE *st,char map[ROWS][COLS]);
+void draw_player(STATE *st,char map[ROWS][COL]);
 
 #endif

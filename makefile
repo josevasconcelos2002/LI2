@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS= -Wall -Wextra -pedantic -O2 -Iincludes
 LIBS= -lm -lcurses
 
-jogo:  src/testeGeraMapa.o src/player.o src/state.o src/monsters.o src/menus.o main.o
+jogo:  src/player.o src/monsters.o src/state.o   src/testeGeraMapa.o src/menus.o main.o
 	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
 main.o: main.c

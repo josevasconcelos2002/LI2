@@ -46,7 +46,7 @@ void remove_monster(STATE *st){
 }
 */
 
-void draw_monster(STATE *st, char map[ROWS][COLS]){
+void draw_monster(STATE *st, char map[ROWS][COL]){
 	attron(COLOR_PAIR(1));
 	for(int i = 0; i<10 ; i++){
 		if(!is_parede(map[st->monstros[i].monsterY][st->monstros[i].monsterX])){

@@ -1,20 +1,19 @@
-#ifndef STATE_H
-#define STATE_H
-
 #include "testeGeraMapa.h"
+#include <stdbool.h>
 #include "monsters.h"
-#include "player.h"
+//#include "player.h"
 
 typedef struct state {
 	PLAYER *player;
 	MONSTER monstros[10];
 } STATE;
 
-struct player *get_player(STATE *st);
+
+//struct player *get_player(STATE *st);
 
 void inicializa_state(STATE *st);
 
-void do_movement_action(STATE *st, int dx, int dy,char map[ROWS][COLS]);
+void do_movement_action(STATE *st, int dx, int dy,char map[ROWS][COL]);
 
 bool is_parede(int key);
 
@@ -26,12 +25,10 @@ bool is_move_up(int key);
 
 bool is_move_down(int key);
 
-bool valid_move(STATE *st,int key,char map[ROWS][COLS]);
+bool valid_move(STATE *st,int key,char map[ROWS][COL]);
 
-void desenha_pontos(char map[ROWS][COLS]);
+void desenha_pontos(char map[ROWS][COL]);
 
 /*void game_over();*/
 
-void update(STATE *st,char map[ROWS][COLS]);
-
-#endif
+void update(STATE *st,char map[ROWS][COL]);

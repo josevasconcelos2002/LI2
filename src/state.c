@@ -3,20 +3,23 @@
 #include "monsters.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <ncurses.h>
+#include "menus.h"
 
 
+bool only_dots = false;
 
 void inicializa_state(STATE *st){
 	st->player = malloc(sizeof(PLAYER));
 	inicializa_player(st->player);
 	inicializa_monster(st->monstros,10);
 }
-
+/*
 struct player *get_player(STATE *st){
 	return (struct player *)st->player;
 }
-
-void do_movement_action(STATE *st, int dx, int dy,char map[ROWS][COLS]) {
+*/
+void do_movement_action(STATE *st, int dx, int dy,char map[ROWS][COL]) {
 	st->player->playerX += dx;
 	st->player->playerY += dy;
 	map[st->player->playerY-dy][st->player->playerX-dx] = ' ';
@@ -42,7 +45,7 @@ bool is_move_down(int key){
 	return key == 115;
 }
 
-bool valid_move(STATE *st,int key,char map[ROWS][COLS]){
+bool valid_move(STATE *st,int key,char map[ROWS][COL]){
 	bool r = true;
 	if(!only_dots){
 		if((is_move_right(key) && (is_parede((int)map[st->player->playerY][st->player->playerX+1]))) || is_monster(map[st->player->playerY][st->player->playerX+1])) r = false;
@@ -60,7 +63,7 @@ bool valid_move(STATE *st,int key,char map[ROWS][COLS]){
 }
 
 
-void desenha_pontos(char map[ROWS][COLS]) {
+void desenha_pontos(char map[ROWS][COL]) {
     for(int i = 0; i < ROWS; i++) {
         for(int j = 0; j < COLS; j++) {
 
@@ -116,7 +119,7 @@ void game_over() {
 }
 */
 
-void update(STATE *st,char map[ROWS][COLS]) {
+void update(STATE *st,char map[ROWS][COL]) {
 	int key = getch();
 	mvaddch(st->player->playerY,st->player->playerX, ' ');
 	remove_light(st,key,map);

@@ -70,7 +70,7 @@ void kill(STATE *st){
 }
 */
 
-void draw_light(STATE *st, char key, char map[ROWS][COLS]){
+void draw_light(STATE *st, char key, char map[ROWS][COL]){
 	if(is_move_left((int)key)){
 			attron(COLOR_PAIR(COLOR_YELLOW));
 		if(!is_parede(mvinch(st->player->playerY, st->player->playerX-3)) && !is_monster(mvinch(st->player->playerY, st->player->playerX-3))) map[st->player->playerY][st->player->playerX-3] = '.';
@@ -130,7 +130,7 @@ void draw_light(STATE *st, char key, char map[ROWS][COLS]){
 	}
 }
 
-void remove_light(STATE *st, char key, char map[ROWS][COLS]){
+void remove_light(STATE *st, char key, char map[ROWS][COL]){
 	if(is_move_left((int)key)){
 		if(mvinch(st->player->playerY, st->player->playerX-3) == '.') map[st->player->playerY][st->player->playerX-3] =  ' ';
 		if(mvinch(st->player->playerY-1, st->player->playerX-3) == '.') map[st->player->playerY-1][st->player->playerX-3] =  ' ';
@@ -182,7 +182,7 @@ void remove_light(STATE *st, char key, char map[ROWS][COLS]){
 	}
 }
 
-void draw_player(STATE *st,char map[ROWS][COLS]){
+void draw_player(STATE *st,char map[ROWS][COL]){
 	attron(COLOR_PAIR(COLOR_WHITE));
 	map[st->player->playerY][st->player->playerX] = '@';
     for(int i = 0; i<ROWS ; i++){
