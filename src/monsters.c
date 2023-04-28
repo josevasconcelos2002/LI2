@@ -22,8 +22,8 @@ void spawn_mobs() {
         int x, y;
         do {
             // Gera uma posição aleatória
-            x = rand() % MAP_WIDTH;
-            y = rand() % MAP_HEIGHT;
+            x = rand() % COL;
+            y = rand() % ROWS;
         } while (mvinch(y, x) == '#'); // Verifica se a posição é uma parede
         
         // Inicializa o monstro com a posição gerada e atributos aleatórios
