@@ -6,23 +6,32 @@
 #include <ncurses.h>
 #include "menus.h"
 
+typedef struct state {
+	PLAYER *player;
+	MONSTER monstros[10];
+} STATE;
+
 
 bool only_dots = false;
 
+PLAYER *get_player(STATE *st){
+	return st->player;
+}
+
 void inicializa_state(STATE *st){
-	st->player = malloc(sizeof(PLAYER));
+	get_player(st) = malloc(sizeof(PLAYER));
 	inicializa_player(st->player);
 	inicializa_monster(st->monstros,10);
 }
-/*
-struct player *get_player(STATE *st){
-	return (struct player *)st->player;
+
+MONSTER *get_monsters(STATE *st){
+	return st->monstros;
 }
-*/
+
 void do_movement_action(STATE *st, int dx, int dy,char map[ROWS][COL]) {
-	st->player->playerX += dx;
-	st->player->playerY += dy;
-	map[st->player->playerY-dy][st->player->playerX-dx] = ' ';
+	get_playerX(st) += dx;
+	get_playerY(st) += dy;
+	map[get_playerY(st)-dy][get_playerX(st)-dx] = ' ';
 }
 
 bool is_parede(int key){
@@ -48,16 +57,16 @@ bool is_move_down(int key){
 bool valid_move(STATE *st,int key,char map[ROWS][COL]){
 	bool r = true;
 	if(!only_dots){
-		if((is_move_right(key) && (is_parede((int)map[st->player->playerY][st->player->playerX+1]))) || is_monster(map[st->player->playerY][st->player->playerX+1])) r = false;
-		if((is_move_left(key) && (is_parede((int)map[st->player->playerY][st->player->playerX-1]))) || is_monster(map[st->player->playerY][st->player->playerX-1])) r = false;
-		if((is_move_up(key) && (is_parede((int)map[st->player->playerY-1][st->player->playerX]))) || is_monster(map[st->player->playerY-1][st->player->playerX])) r = false;
-		if((is_move_down(key) && (is_parede((int)map[st->player->playerY+1][st->player->playerX]))) || is_monster(map[st->player->playerY+1][st->player->playerX])) r = false;
+		if((is_move_right(key) && (is_parede((int)map[get_playerY(st)][get_playerX(st)+1]))) || is_monster(map[get_playerY(st)][get_playerX(st)+1])) r = false;
+		if((is_move_left(key) && (is_parede((int)map[get_playerY(st)][get_playerX(st)-1]))) || is_monster(map[get_playerY(st)][get_playerX(st)-1])) r = false;
+		if((is_move_up(key) && (is_parede((int)map[get_playerY(st)-1][get_playerX(st)]))) || is_monster(map[get_playerY(st)-1][get_playerX(st)])) r = false;
+		if((is_move_down(key) && (is_parede((int)map[get_playerY(st)+1][get_playerX(st)]))) || is_monster(map[get_playerY(st)+1][get_playerX(st)])) r = false;
 	}
 	else{
-		if(is_move_right(key) && (is_parede((int)map[st->player->playerY][st->player->playerX+1]))) r = false;
-		if(is_move_left(key) && (is_parede((int)map[st->player->playerY][st->player->playerX-1]))) r = false;
-		if(is_move_up(key) && (is_parede((int)map[st->player->playerY-1][st->player->playerX]))) r = false;
-		if(is_move_down(key) && (is_parede((int)map[st->player->playerY+1][st->player->playerX]))) r = false;
+		if(is_move_right(key) && (is_parede((int)map[get_playerY(st)][get_playerX(st)+1]))) r = false;
+		if(is_move_left(key) && (is_parede((int)map[get_playerY(st)][get_playerX(st)-1]))) r = false;
+		if(is_move_up(key) && (is_parede((int)map[get_playerY(st)-1][get_playerX(st)]))) r = false;
+		if(is_move_down(key) && (is_parede((int)map[get_playerY(st)+1][get_playerX(st)]))) r = false;
 	}
 	return r;
 }

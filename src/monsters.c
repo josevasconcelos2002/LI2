@@ -4,16 +4,53 @@
 #include <ncurses.h>
 #include "testeGeraMapa.h"
 
-typedef struct {
-    int x;
-    int y;
-    int health;
-    int attack;
-} Monster;
+typedef struct monster{
+    int monsterX;
+    int monsterY;
+    int monsterHealth;
+    int monsterAttack;
+} MONSTER;
 
-Monster monsters[10];
+//MONSTER monsters[10];
 
-void spawn_mobs() {
+int get_monsterX(STATE *st){
+    int mX = st->monster->monsterX;
+    return mX;
+}
+
+int get_monsterY(STATE *st){
+    int mY = st->monster->monsterY;
+    return mY;
+}
+
+int get_monsterHealth(STATE *st){
+    int mH = st->monster->monsterHealth;
+    return mH;
+}
+
+int get_monsterAttack(STATE *st){
+    int mA = st->monster->monsterAttack;
+    return mA;
+}
+
+void set_monsterX(STATE *st, int x){
+    st->monster->monsterX = x;
+}
+
+void set_monsterY(STATE *st, int y){
+    st->monster->monsterY = y;
+}
+
+void set_monsterHealth(STATE *st, int health){
+    st->monster->monsterHealth = health;
+}
+
+void set_monsterAttack(STATE *st, int attack){
+    st->monster->monsterAttack = attack;
+}
+
+
+void spawn_mobs(STATE *st) {
     // Inicializa o gerador de números aleatórios
     srand(time(NULL));
     
@@ -27,10 +64,10 @@ void spawn_mobs() {
         } while (mvinch(y, x) == '#'); // Verifica se a posição é uma parede
         
         // Inicializa o monstro com a posição gerada e atributos aleatórios
-        monsters[i].x = x;
-        monsters[i].y = y;
-        monsters[i].health = rand() % 10 + 1;
-        monsters[i].attack = rand() % 5 + 1;
+        get_monsters(st)[i].x = x;
+        get_monsters(st)[i].y = y;
+        get_monsters(st)[i].health = rand() % 10 + 1;
+        get_monsters(st)[i].attack = rand() % 5 + 1;
         
         // Define o par de cor 1 como vermelho
 		init_pair(1, COLOR_RED, COLOR_BLACK);
@@ -70,21 +107,7 @@ void move_mobs() {
     }
 }
 
-/*void set_monsterX(MONSTER *monster, int x){
-    monster->monsterX = x;
-}
 
-void set_monsterY(MONSTER *monster, int y){
-    monster->monsterY = y;
-}
-
-void set_monsterHealth(MONSTER *monster, int health){
-    monster->monsterHealth = health;
-}
-
-void set_monsterAtack(MONSTER *monster, int atack){
-    monster->monsterAtack = atack;
-}
 
 bool is_monster(char c){
 	bool resultado = false;
@@ -94,21 +117,20 @@ bool is_monster(char c){
 
 void inicializa_monster(MONSTER monstros[],int N){
 	for(int i = 0; i<N ; i++){
-		monstros[i].monsterAtack = 5;
+		monstros[i].monsterAttack = 5;
 		monstros[i].monsterHealth = 50;
 		monstros[i].monsterY = 15+ 3*i;
 		monstros[i].monsterX = 25 + 5*i;
 	}
 }
 
-
+/*
 void remove_monster(STATE *st){
 	int x = st->monster->monsterX;
 	int y = st->monster->monsterY;
 	mvaddch(y,x, ' ' | A_BOLD);
 	st->monster = NULL;
 }
-*/
 
 void draw_monster(STATE *st, char map[ROWS][COL]){
 	attron(COLOR_PAIR(1));
@@ -121,3 +143,4 @@ void draw_monster(STATE *st, char map[ROWS][COL]){
 	attroff(COLOR_PAIR(1));
 	refresh();
 }
+*/
