@@ -3,12 +3,7 @@
 
 #include "state.h"
 
-typedef struct player{
-	int playerX;
-	int playerY;
-	int playerHealth;
-	int playerAtack;
-} PLAYER;
+typedef struct player PLAYER;
 
 int get_playerX(PLAYER *player);
 

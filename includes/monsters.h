@@ -5,12 +5,7 @@
 #include"testeGeraMapa.h"
 #include "state.h"
 
-typedef struct monster{
-	int monsterX;
-	int monsterY;
-	int monsterHealth;
-	int monsterAtack;
-} MONSTER;
+typedef struct monster MONSTER;
 
 bool is_monster(char c);
 

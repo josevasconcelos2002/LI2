@@ -3,6 +3,7 @@
     "files.associations": {
         "ncurses.h": "c",
         "testegeramapa.h": "c",
-        "state.h": "c"
+        "state.h": "c",
+        "stdbool.h": "c"
     }
 }
