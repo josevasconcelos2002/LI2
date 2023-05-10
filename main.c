@@ -17,20 +17,22 @@
 #define COLS 211
 
 
-typedef struct player{
+typedef struct{
 	int playerX;
 	int playerY;
 	int playerHealth;
 	int playerAttack;
 } PLAYER;
 
-typedef struct monster{
+typedef struct{
     int monsterX;
     int monsterY;
     int monsterHealth;
     int monsterAttack;
 } MONSTER;
 
+MONSTER monster;
+PLAYER player;
 
 typedef struct state {
 	PLAYER *player;
@@ -253,7 +255,20 @@ void show_pause_menu() {
     }
 }
 
+// esta função apenas está definida para um monstro, falta generalizar
+void monster_attack() {
+    // Calcula o dano causado pelo monstro
+    int damage = rand() % (monster.monsterAttack + 1);
 
+    // Reduz a vida do jogador pelo dano causado
+    player.playerHealth -= damage;
+
+    // Verifica se o jogador morreu
+    if (player.playerHealth <= 0) {
+        // Exibe a mensagem de Game Over
+        mvprintw(ROWS + 1, 0, "Game Over");
+    }
+}
 
 
 
