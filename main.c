@@ -271,21 +271,22 @@ void show_pause_menu() {
     }
 }
 
-/* esta função apenas está definida para um monstro, falta generalizar
-void monster_attack() {
-    // Calcula o dano causado pelo monstro
-    int damage = rand() % (monster.monsterAttack + 1);
+// esta função apenas está definida para um monstro, falta generalizar
+void monster_attack(State *st) {
+    int dx = monster->monsterX - player->x;
+    int dy = monster->monsterY - player->y;
 
-    // Reduz a vida do jogador pelo dano causado
-    player.playerHealth -= damage;
+	// Calcula a distância entre o monstro e o jogador
+    int distance = abs(dx) + abs(dy);
 
-    // Verifica se o jogador morreu
-    if (player.playerHealth <= 0) {
-        // Exibe a mensagem de Game Over
-        mvprintw(ROWS + 1, 0, "Game Over");
-    }
+	if (distance == 1){
+		while (player -> playerHealth > 0) {
+			monster -> monsterHealth -= 15;
+			player -> playerHealth -= 5;
+		}
+	}
 }
-*/
+
 bool only_dots = false;
 
 PLAYER *get_player(STATE *st){
