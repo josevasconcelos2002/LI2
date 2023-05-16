@@ -130,6 +130,22 @@ void remove_isolated_walls(char map[ROWS][COLS]) {
     }
 }
 
+void roguelite(){
+	clear();
+	WINDOW *wnd = initscr();
+	curs_set(0);
+	attron(A_BOLD);
+	attron(COLOR_PAIR(1));
+	int x,y;
+	getmaxyx(wnd,y,x);
+	mvprintw(y/2,x/2,"Roguelite");
+	attroff(A_BOLD);
+	attroff(COLOR_PAIR(1));
+	sleep(2);
+	delwin(wnd);
+}
+
+
 // Função para exibir o menu principal
 int show_main_menu() {
     clear(); // Limpa a tela
@@ -780,6 +796,7 @@ int main(){
 	WINDOW *wnd = initscr();
 	int ncols, nrows;
 	getmaxyx(wnd,nrows,ncols);
+	//roguelite(wnd);
 	show_main_menu();
 	char map[ROWS][COLS];
 	do{
