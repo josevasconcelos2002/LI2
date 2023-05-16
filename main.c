@@ -271,7 +271,7 @@ void show_pause_menu() {
     }
 }
 
-// esta função apenas está definida para um monstro, falta generalizar
+/* esta função apenas está definida para um monstro, falta generalizar
 void monster_attack() {
     // Calcula o dano causado pelo monstro
     int damage = rand() % (monster.monsterAttack + 1);
@@ -285,9 +285,7 @@ void monster_attack() {
         mvprintw(ROWS + 1, 0, "Game Over");
     }
 }
-
-
-
+*/
 bool only_dots = false;
 
 PLAYER *get_player(STATE *st){
@@ -812,7 +810,7 @@ int main(){
 		remove_isolated_walls(map);
 
 		// Adiciona paredes nas bordas do mapa
-		for (int i = 0; i < ROWS; i++) {
+		/*for (int i = 0; i < ROWS; i++) {
 			map[i][0] = '#';
 			map[i][COLS-1] = '#';
 		}
@@ -820,6 +818,12 @@ int main(){
 			map[0][j] = '#';
 			map[ROWS-1][j] = '#';
 		}
+		*/
+
+		WINDOW* window = newwin(ROWS, COLS, 1, 1);
+		box(window, '#', '#');
+		refresh();
+
 	}
 	while(is_parede((int)map[st->player->playerY][st->player->playerX]));
 	clear();
