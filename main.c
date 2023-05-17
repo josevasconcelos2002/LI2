@@ -5,16 +5,17 @@
 #include <time.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
 //#include "player.h"
 //#include "state.h"
 //#include "monsters.h"
 //#include "testeGeraMapa.h"
 //#include "menus.h"
 
-#define WALL_PROB 0.48
+#define WALL_PROB 0.465
 #define ITERATIONS 10
-#define ROWS 52
-#define COLS 211
+#define ROWS 30//52
+#define COLS 100//211
 
 
 typedef struct{
@@ -272,21 +273,22 @@ void show_pause_menu() {
 }
 
 // esta função apenas está definida para um monstro, falta generalizar
-void monster_attack(State *st) {
-    int dx = monster->monsterX - player->x;
-    int dy = monster->monsterY - player->y;
+/*
+void monster_attack(STATE *st) {
+    int dx = st->monster->monsterX - st->player->playerX;
+    int dy = st->monster->monsterY - st->player->playerY;
 
 	// Calcula a distância entre o monstro e o jogador
     int distance = abs(dx) + abs(dy);
 
 	if (distance == 1){
-		while (player -> playerHealth > 0) {
-			monster -> monsterHealth -= 15;
-			player -> playerHealth -= 5;
+		while (st->player->playerHealth > 0) {
+			st->monster -> monsterHealth -= 15;
+			st->player -> playerHealth -= 5;
 		}
 	}
 }
-
+*/
 bool only_dots = false;
 
 PLAYER *get_player(STATE *st){
@@ -330,8 +332,8 @@ void set_playerAtack(STATE *state, int attack){
 }
 
 void inicializa_player(STATE *state){
-    get_player(state)->playerX = 20;
-    get_player(state)->playerY = 20;
+    get_player(state)->playerX = 15;
+    get_player(state)->playerY = 15;
     get_player(state)->playerHealth = 100;
     get_player(state)->playerAttack = 10;
 }
@@ -411,28 +413,30 @@ void spawn_mobs(STATE *st) {
 void move_mobs(STATE *st, char map[ROWS][COLS]) {
     // Itera sobre a lista de monstros
     for (int i = 0; i < 10; i++) {
-        int x, y;
-        do {
-            // Gera uma posição aleatória adjacente
-            x = get_monsters(st)[i].monsterX + rand() % 3 - 1;
-            y = get_monsters(st)[i].monsterY + rand() % 3 - 1;
-        } while (map[y][x] == '#'); // Verifica se a posição é uma parede
-        
-        // Apaga o monstro da posição anterior
-		if(mvinch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX) != '#')
-        	mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, ' ');
-        
-        // Atualiza a posição do monstro
-        get_monsters(st)[i].monsterX = x;
-        get_monsters(st)[i].monsterY = y;
-        
-        // Define o par de cor 1 como vermelho
-		init_pair(1, COLOR_RED, COLOR_BLACK);
+		if(&st->monstros[i] != NULL){
+			int x, y;
+			do {
+				// Gera uma posição aleatória adjacente
+				x = get_monsters(st)[i].monsterX + rand() % 3 - 1;
+				y = get_monsters(st)[i].monsterY + rand() % 3 - 1;
+			} while (map[y][x] == '#'); // Verifica se a posição é uma parede
+			
+			// Apaga o monstro da posição anterior
+			if(mvinch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX) != '#')
+				mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, ' ');
+			
+			// Atualiza a posição do monstro
+			get_monsters(st)[i].monsterX = x;
+			get_monsters(st)[i].monsterY = y;
+			
+			// Define o par de cor 1 como vermelho
+			init_pair(1, COLOR_RED, COLOR_BLACK);
 
-		// Ativa a cor vermelha para imprimir o monstro
-		attron(COLOR_PAIR(1));
-		mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, '!');
-		attroff(COLOR_PAIR(1));
+			// Ativa a cor vermelha para imprimir o monstro
+			attron(COLOR_PAIR(1));
+			mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, '!');
+			attroff(COLOR_PAIR(1));
+		}
     }
 }
 
@@ -689,6 +693,50 @@ void draw_player(STATE *st,char map[ROWS][COLS]){
 	refresh();
 }
 
+double distancia(PLAYER *player, MONSTER *monster){
+	double resultado = 0.0;
+	int dx = abs(player->playerX - monster->monsterX);
+	int dy = abs(player->playerY - monster->monsterY);
+	resultado =  sqrt(dx * dx + dy * dy);
+	return resultado;
+}
+
+
+MONSTER *get_monster(STATE *st){
+	MONSTER *resultado = NULL;
+	for(int i = 0; i<10 ; i++){
+		if(distancia(st->player,&st->monstros[i]) == 1.0){
+			resultado = &st->monstros[i];
+		}
+	}
+	return resultado;
+}
+
+void remove_monster(MONSTER *monster,char map[ROWS][COLS]){
+	int x = monster->monsterX;
+	int y = monster->monsterY;
+	//map[y][x] = ' ';
+	//mvaddch(y,x,' ');
+	//monster = NULL;
+}
+
+
+void kill(STATE *st,char map[ROWS][COLS]){
+	
+	MONSTER *monstro = get_monster(st);
+	if(monstro != NULL){
+		monstro->monsterHealth -= st->player->playerAttack;
+		st->player->playerHealth -= monstro->monsterAttack;
+	}
+
+	if(monstro->monsterHealth <= 0) remove_monster(monstro,map);
+	if(st->player->playerHealth <= 0){
+		endwin();
+		//game_over();
+	}
+
+}
+
 
 void update(STATE *st,char map[ROWS][COLS]) {
 	int key = getch();
@@ -699,7 +747,7 @@ void update(STATE *st,char map[ROWS][COLS]) {
 		case 's': if(valid_move(st,(int)'s',map)) do_movement_action(st, +0, +1,map); break;
 		case 'a': if(valid_move(st,(int)'a',map)) do_movement_action(st, -1, +0,map); break;
 		case 'd': if(valid_move(st,(int)'d',map)) do_movement_action(st, +1, +0,map); break;
-		//case 'k': kill(st); break;
+		case 'k': kill(st,map); break;
 		case 'v': only_dots =  !only_dots;  desenha_pontos(map); break; //altera o modo de visao
 		case ' ': show_pause_menu(); break; // espaco
 		case 'q': endwin(); exit(0); break;
@@ -811,7 +859,7 @@ int main(){
 		remove_isolated_walls(map);
 
 		// Adiciona paredes nas bordas do mapa
-		/*for (int i = 0; i < ROWS; i++) {
+		for (int i = 0; i < ROWS; i++) {
 			map[i][0] = '#';
 			map[i][COLS-1] = '#';
 		}
@@ -819,14 +867,16 @@ int main(){
 			map[0][j] = '#';
 			map[ROWS-1][j] = '#';
 		}
-		*/
+		
+		st->player->playerY = random() % (COLS - 2) + 1;
+		st->player->playerX = random() % (COLS - 2) + 1;
 
 		WINDOW* window = newwin(ROWS, COLS, 1, 1);
 		box(window, '#', '#');
 		refresh();
 
 	}
-	while(is_parede((int)map[st->player->playerY][st->player->playerX]));
+	while(is_parede((int)map[st->player->playerY][st->player->playerX]) || st->player->playerY > ROWS-1 || st->player->playerX > COLS-1);
 	clear();
 	for (int i = 0; i < ROWS; i++) {
 		for (int j = 0; j < COLS; j++) {

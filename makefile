@@ -18,4 +18,4 @@ main.o: main.c
 #src/menus.o: src/menus.c
 
 clean:
-	rm src/*.o jogo *.o
+	rm jogo *.o
