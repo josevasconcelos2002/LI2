@@ -553,7 +553,7 @@ void desenha_pontos(char map[ROWS][COLS]) {
     }
 }
 
-/*
+
 void game_over() {
     // Configura a janela
     int height = 3; // altura da janela
@@ -585,7 +585,6 @@ void game_over() {
     delwin(win);
     endwin();
 }
-*/
 
 bool dentro_mapa(int y, int x){
 	bool resultado = true;
@@ -710,8 +709,8 @@ void kill(STATE *st,char map[ROWS][COLS]){
 	}
 	if(st->player->playerHealth <= 0){
 		st->player = NULL;
-		endwin();
-		//game_over();
+		//endwin();
+		game_over();
 	}
 
 }
@@ -810,6 +809,17 @@ int main(){
 			mvprintw(ROWS-30, COLS +4,"Player state:");
 			mvprintw(ROWS-27,COLS+3,"	Health: %d",get_playerHealth(st));
 			mvprintw(ROWS-25,COLS+3,"	Atack: %d",get_playerAtack(st));
+		}
+		MONSTER *monstro = get_monster(st);
+		if(monstro != NULL){
+			mvprintw(ROWS-30, COLS +18,"Monster state:");
+			mvprintw(ROWS-27,COLS+17,"	Health: %d",monstro->monsterHealth);
+			mvprintw(ROWS-25,COLS+17,"	Atack: %d",monstro->monsterAttack);
+		}
+		else{
+			mvprintw(ROWS-30, COLS +18,"Monster state:");
+			mvprintw(ROWS-27,COLS+17,"	Health: ");
+			mvprintw(ROWS-25,COLS+17,"	Atack: ");
 		}
 		//mvprintw(ROWS-23,COLS+4,"Posição: (%d, %d) %d %d\n", get_playerX(st), get_playerY(st), ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
