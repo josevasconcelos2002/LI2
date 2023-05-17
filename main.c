@@ -449,7 +449,7 @@ void move_mobs(STATE *st, char map[ROWS][COLS]) {
 			attron(COLOR_PAIR(1));
 			map[get_monsters(st)[i].monsterY][get_monsters(st)[i].monsterX] = '!';
 			double dist = distancia(st->player,&st->monstros[i]);
-			if(dist<3)
+			if(dist<4)
 				st->monstros[i].is_visible = true;
 			if(only_dots){
 				if(get_monsters(st)[i].is_visible)
@@ -587,57 +587,63 @@ void game_over() {
 }
 */
 
+bool dentro_mapa(int y, int x){
+	bool resultado = true;
+	if(y<1 || y>ROWS-1 || x<1 || x>COLS-1) resultado = false;
+	return resultado;
+}
+
 void draw_light(STATE *st, char key, char map[ROWS][COLS]){
 	if(is_move_left((int)key) && valid_move(st,(int)key,map)){
 			attron(COLOR_PAIR(COLOR_YELLOW));
-		if(!is_parede(map[get_playerY(st)][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)][get_playerX(st)-3])) map[get_playerY(st)][get_playerX(st)-3] = '.';
-		if(!is_parede(map[get_playerY(st)-1][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)-3])) map[get_playerY(st)-1][get_playerX(st)-3] = '.';
-		if(!is_parede(map[get_playerY(st)+1][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)+1][get_playerX(st)-3])) map[get_playerY(st)+1][get_playerX(st)-3] = '.';
-		if(!is_parede(map[get_playerY(st)-2][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)-3])) map[get_playerY(st)-2][get_playerX(st)-3] = '.';
-		if(!is_parede(map[get_playerY(st)+2][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)+2][get_playerX(st)-3])) map[get_playerY(st)+2][get_playerX(st)-3] = '.';
-		if(!is_parede(map[get_playerY(st)][get_playerX(st)-2]) && !is_monster(map[get_playerY(st)][get_playerX(st)-2])) map[get_playerY(st)][get_playerX(st)-2] = '.';
-		if(!is_parede(map[get_playerY(st)-1][get_playerX(st)-2]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)-2])) map[get_playerY(st)-1][get_playerX(st)-2] = '.';
-		if(!is_parede(map[get_playerY(st)+1][get_playerX(st)-2]) && !is_monster(map[get_playerY(st)+1][get_playerX(st)-2])) map[get_playerY(st)+1][get_playerX(st)-2] = '.';
-		if(!is_parede(map[get_playerY(st)][get_playerX(st)-1]) && !is_monster(map[get_playerY(st)][get_playerX(st)-1])) map[get_playerY(st)][get_playerX(st)-1] = '.';
+		if(dentro_mapa(get_playerY(st),get_playerX(st)-3) && !is_parede(map[get_playerY(st)][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)][get_playerX(st)-3])) map[get_playerY(st)][get_playerX(st)-3] = '.';
+		if(dentro_mapa(get_playerY(st)-1,get_playerX(st)-3) &&!is_parede(map[get_playerY(st)-1][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)-3])) map[get_playerY(st)-1][get_playerX(st)-3] = '.';
+		if(dentro_mapa(get_playerY(st)+1,get_playerX(st)-3) &&!is_parede(map[get_playerY(st)+1][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)+1][get_playerX(st)-3])) map[get_playerY(st)+1][get_playerX(st)-3] = '.';
+		if(dentro_mapa(get_playerY(st)-2,get_playerX(st)-3) &&!is_parede(map[get_playerY(st)-2][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)-3])) map[get_playerY(st)-2][get_playerX(st)-3] = '.';
+		if(dentro_mapa(get_playerY(st)+2,get_playerX(st)-3) &&!is_parede(map[get_playerY(st)+2][get_playerX(st)-3]) && !is_monster(map[get_playerY(st)+2][get_playerX(st)-3])) map[get_playerY(st)+2][get_playerX(st)-3] = '.';
+		if(dentro_mapa(get_playerY(st),get_playerX(st)-2) &&!is_parede(map[get_playerY(st)][get_playerX(st)-2]) && !is_monster(map[get_playerY(st)][get_playerX(st)-2])) map[get_playerY(st)][get_playerX(st)-2] = '.';
+		if(dentro_mapa(get_playerY(st)-1,get_playerX(st)-2) &&!is_parede(map[get_playerY(st)-1][get_playerX(st)-2]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)-2])) map[get_playerY(st)-1][get_playerX(st)-2] = '.';
+		if(dentro_mapa(get_playerY(st)+1,get_playerX(st)-2) &&!is_parede(map[get_playerY(st)+1][get_playerX(st)-2]) && !is_monster(map[get_playerY(st)+1][get_playerX(st)-2])) map[get_playerY(st)+1][get_playerX(st)-2] = '.';
+		if(dentro_mapa(get_playerY(st),get_playerX(st)-1) &&!is_parede(map[get_playerY(st)][get_playerX(st)-1]) && !is_monster(map[get_playerY(st)][get_playerX(st)-1])) map[get_playerY(st)][get_playerX(st)-1] = '.';
 			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_up((int)key)&& valid_move(st,(int)key,map)){
 			attron(COLOR_PAIR(COLOR_YELLOW));
-		if(!is_parede(map[get_playerY(st)-3][get_playerX(st)]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)])) map[get_playerY(st)-3][get_playerX(st)] =  '.';
-		if(!is_parede(map[get_playerY(st)-3][get_playerX(st)-1]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)-1])) map[get_playerY(st)-3][get_playerX(st)-1] =  '.';
-		if(!is_parede(map[get_playerY(st)-3][get_playerX(st)+1]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)+1])) map[get_playerY(st)-3][get_playerX(st)+1] =  '.';
-		if(!is_parede(map[get_playerY(st)-3][get_playerX(st)-2]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)-2])) map[get_playerY(st)-3][get_playerX(st)-2] =  '.';
-		if(!is_parede(map[get_playerY(st)-3][get_playerX(st)+2]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)+2])) map[get_playerY(st)-3][get_playerX(st)+2] =  '.';
-		if(!is_parede(map[get_playerY(st)-2][get_playerX(st)]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)])) map[get_playerY(st)-2][get_playerX(st)] =  '.';
-		if(!is_parede(map[get_playerY(st)-2][get_playerX(st)-1]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)-1])) map[get_playerY(st)-2][get_playerX(st)-1] =  '.';
-		if(!is_parede(map[get_playerY(st)-2][get_playerX(st)+1]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)+1])) map[get_playerY(st)-2][get_playerX(st)+1] =  '.';
-		if(!is_parede(map[get_playerY(st)-1][get_playerX(st)]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)])) map[get_playerY(st)-1][get_playerX(st)] =  '.';
+		if(dentro_mapa(get_playerY(st)-3,get_playerX(st)) &&!is_parede(map[get_playerY(st)-3][get_playerX(st)]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)])) map[get_playerY(st)-3][get_playerX(st)] =  '.';
+		if(dentro_mapa(get_playerY(st)-3,get_playerX(st)-1) &&!is_parede(map[get_playerY(st)-3][get_playerX(st)-1]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)-1])) map[get_playerY(st)-3][get_playerX(st)-1] =  '.';
+		if(dentro_mapa(get_playerY(st)-3,get_playerX(st)+1) &&!is_parede(map[get_playerY(st)-3][get_playerX(st)+1]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)+1])) map[get_playerY(st)-3][get_playerX(st)+1] =  '.';
+		if(dentro_mapa(get_playerY(st)-3,get_playerX(st)-2) &&!is_parede(map[get_playerY(st)-3][get_playerX(st)-2]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)-2])) map[get_playerY(st)-3][get_playerX(st)-2] =  '.';
+		if(dentro_mapa(get_playerY(st)-3,get_playerX(st)+2) &&!is_parede(map[get_playerY(st)-3][get_playerX(st)+2]) && !is_monster(map[get_playerY(st)-3][get_playerX(st)+2])) map[get_playerY(st)-3][get_playerX(st)+2] =  '.';
+		if(dentro_mapa(get_playerY(st)-2,get_playerX(st)) &&!is_parede(map[get_playerY(st)-2][get_playerX(st)]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)])) map[get_playerY(st)-2][get_playerX(st)] =  '.';
+		if(dentro_mapa(get_playerY(st)-2,get_playerX(st)-1) &&!is_parede(map[get_playerY(st)-2][get_playerX(st)-1]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)-1])) map[get_playerY(st)-2][get_playerX(st)-1] =  '.';
+		if(dentro_mapa(get_playerY(st)-2,get_playerX(st)+1) &&!is_parede(map[get_playerY(st)-2][get_playerX(st)+1]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)+1])) map[get_playerY(st)-2][get_playerX(st)+1] =  '.';
+		if(dentro_mapa(get_playerY(st)-1,get_playerX(st)) &&!is_parede(map[get_playerY(st)-1][get_playerX(st)]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)])) map[get_playerY(st)-1][get_playerX(st)] =  '.';
 			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_right((int)key)&& valid_move(st,(int)key,map)){
 			attron(COLOR_PAIR(COLOR_YELLOW));
-		if(!is_parede(map[get_playerY(st)][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)][get_playerX(st)+3])) map[get_playerY(st)][get_playerX(st)+3] =  '.';
-		if(!is_parede(map[get_playerY(st)-1][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)+3])) map[get_playerY(st)-1][get_playerX(st)+3] =  '.';
-		if(!is_parede(map[get_playerY(st)+1][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)+1][get_playerX(st)+3])) map[get_playerY(st)+1][get_playerX(st)+3] =  '.';
-		if(!is_parede(map[get_playerY(st)-2][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)+3])) map[get_playerY(st)-2][get_playerX(st)+3] =  '.';
-		if(!is_parede(map[get_playerY(st)+2][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)+2][get_playerX(st)+3])) map[get_playerY(st)+2][get_playerX(st)+3] =  '.';
-		if(!is_parede(map[get_playerY(st)][get_playerX(st)+2]) && !is_monster(map[get_playerY(st)][get_playerX(st)+2])) map[get_playerY(st)][get_playerX(st)+2] =  '.';
-		if(!is_parede(map[get_playerY(st)-1][get_playerX(st)+2]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)+2])) map[get_playerY(st)-1][get_playerX(st)+2] =  '.';
-		if(!is_parede(map[get_playerY(st)+1][get_playerX(st)+2]) && !is_monster(map[get_playerY(st)+1][get_playerX(st)+2])) map[get_playerY(st)+1][get_playerX(st)+2] =  '.';
-		if(!is_parede(map[get_playerY(st)][get_playerX(st)+1]) && !is_monster(map[get_playerY(st)][get_playerX(st)+1])) map[get_playerY(st)][get_playerX(st)+1] =  '.';
+		if(dentro_mapa(get_playerY(st),get_playerX(st)+3) &&!is_parede(map[get_playerY(st)][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)][get_playerX(st)+3])) map[get_playerY(st)][get_playerX(st)+3] =  '.';
+		if(dentro_mapa(get_playerY(st)-1,get_playerX(st)+3) &&!is_parede(map[get_playerY(st)-1][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)+3])) map[get_playerY(st)-1][get_playerX(st)+3] =  '.';
+		if(dentro_mapa(get_playerY(st)+1,get_playerX(st)+3) &&!is_parede(map[get_playerY(st)+1][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)+1][get_playerX(st)+3])) map[get_playerY(st)+1][get_playerX(st)+3] =  '.';
+		if(dentro_mapa(get_playerY(st)-2,get_playerX(st)+3) &&!is_parede(map[get_playerY(st)-2][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)-2][get_playerX(st)+3])) map[get_playerY(st)-2][get_playerX(st)+3] =  '.';
+		if(dentro_mapa(get_playerY(st)+2,get_playerX(st)+3) &&!is_parede(map[get_playerY(st)+2][get_playerX(st)+3]) && !is_monster(map[get_playerY(st)+2][get_playerX(st)+3])) map[get_playerY(st)+2][get_playerX(st)+3] =  '.';
+		if(dentro_mapa(get_playerY(st),get_playerX(st)+2) &&!is_parede(map[get_playerY(st)][get_playerX(st)+2]) && !is_monster(map[get_playerY(st)][get_playerX(st)+2])) map[get_playerY(st)][get_playerX(st)+2] =  '.';
+		if(dentro_mapa(get_playerY(st)-1,get_playerX(st)+2) &&!is_parede(map[get_playerY(st)-1][get_playerX(st)+2]) && !is_monster(map[get_playerY(st)-1][get_playerX(st)+2])) map[get_playerY(st)-1][get_playerX(st)+2] =  '.';
+		if(dentro_mapa(get_playerY(st)+1,get_playerX(st)+2) &&!is_parede(map[get_playerY(st)+1][get_playerX(st)+2]) && !is_monster(map[get_playerY(st)+1][get_playerX(st)+2])) map[get_playerY(st)+1][get_playerX(st)+2] =  '.';
+		if(dentro_mapa(get_playerY(st),get_playerX(st)+1) &&!is_parede(map[get_playerY(st)][get_playerX(st)+1]) && !is_monster(map[get_playerY(st)][get_playerX(st)+1])) map[get_playerY(st)][get_playerX(st)+1] =  '.';
 			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_down((int)key)&& valid_move(st,(int)key,map)){
 			attron(COLOR_PAIR(COLOR_YELLOW));
-		if(!is_parede(map[get_playerY(st)+3][get_playerX(st)]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)])) map[get_playerY(st)+3][get_playerX(st)] =  '.';
-		if(!is_parede(map[get_playerY(st)+3][get_playerX(st)-1]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)-1])) map[get_playerY(st)+3][get_playerX(st)-1] =  '.';
-		if(!is_parede(map[get_playerY(st)+3][get_playerX(st)+1]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)+1])) map[get_playerY(st)+3][get_playerX(st)+1] =  '.';
-		if(!is_parede(map[get_playerY(st)+3][get_playerX(st)-2]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)-2])) map[get_playerY(st)+3][get_playerX(st)-2] =  '.';
-		if(!is_parede(map[get_playerY(st)+3][get_playerX(st)+2]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)+2])) map[get_playerY(st)+3][get_playerX(st)+2] =  '.';
-		if(!is_parede(map[get_playerY(st)+2][get_playerX(st)]) && !is_monster(map[(get_playerY(st)+2)][get_playerX(st)])) map[get_playerY(st)+2][get_playerX(st)] =  '.';
-		if(!is_parede(map[get_playerY(st)+2][get_playerX(st)-1]) && !is_monster(map[(get_playerY(st)+2)][get_playerX(st)-1])) map[get_playerY(st)+2][get_playerX(st)-1] =  '.';
-		if(!is_parede(map[get_playerY(st)+2][get_playerX(st)+1]) && !is_monster(map[(get_playerY(st)+2)][get_playerX(st)+1])) map[get_playerY(st)+2][get_playerX(st)+1] =  '.';
-		if(!is_parede(map[get_playerY(st)+1][get_playerX(st)]) && !is_monster(map[(get_playerY(st)+1)][get_playerX(st)])) map[get_playerY(st)+1][get_playerX(st)] =  '.';
+		if(dentro_mapa(get_playerY(st)+3,get_playerX(st)) &&!is_parede(map[get_playerY(st)+3][get_playerX(st)]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)])) map[get_playerY(st)+3][get_playerX(st)] =  '.';
+		if(dentro_mapa(get_playerY(st)+3,get_playerX(st)-1) &&!is_parede(map[get_playerY(st)+3][get_playerX(st)-1]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)-1])) map[get_playerY(st)+3][get_playerX(st)-1] =  '.';
+		if(dentro_mapa(get_playerY(st)+3,get_playerX(st)+1) &&!is_parede(map[get_playerY(st)+3][get_playerX(st)+1]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)+1])) map[get_playerY(st)+3][get_playerX(st)+1] =  '.';
+		if(dentro_mapa(get_playerY(st)+3,get_playerX(st)-2) &&!is_parede(map[get_playerY(st)+3][get_playerX(st)-2]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)-2])) map[get_playerY(st)+3][get_playerX(st)-2] =  '.';
+		if(dentro_mapa(get_playerY(st)+3,get_playerX(st)+2) &&!is_parede(map[get_playerY(st)+3][get_playerX(st)+2]) && !is_monster(map[(get_playerY(st)+3)][get_playerX(st)+2])) map[get_playerY(st)+3][get_playerX(st)+2] =  '.';
+		if(dentro_mapa(get_playerY(st)+2,get_playerX(st)) &&!is_parede(map[get_playerY(st)+2][get_playerX(st)]) && !is_monster(map[(get_playerY(st)+2)][get_playerX(st)])) map[get_playerY(st)+2][get_playerX(st)] =  '.';
+		if(dentro_mapa(get_playerY(st)+2,get_playerX(st)-1) &&!is_parede(map[get_playerY(st)+2][get_playerX(st)-1]) && !is_monster(map[(get_playerY(st)+2)][get_playerX(st)-1])) map[get_playerY(st)+2][get_playerX(st)-1] =  '.';
+		if(dentro_mapa(get_playerY(st)+2,get_playerX(st)+1) &&!is_parede(map[get_playerY(st)+2][get_playerX(st)+1]) && !is_monster(map[(get_playerY(st)+2)][get_playerX(st)+1])) map[get_playerY(st)+2][get_playerX(st)+1] =  '.';
+		if(dentro_mapa(get_playerY(st)+1,get_playerX(st)) &&!is_parede(map[get_playerY(st)+1][get_playerX(st)]) && !is_monster(map[(get_playerY(st)+1)][get_playerX(st)])) map[get_playerY(st)+1][get_playerX(st)] =  '.';
 			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	for(int i = 0; i<ROWS ; i++){
