@@ -229,7 +229,7 @@ void show_pause_menu() {
         if (i == menu_choice) {
             attron(A_REVERSE);
         }
-        mvprintw(y/2+i, x/2-5, menu_items[i]);
+        mvprintw(y/2+i, x/2-5, "%s", menu_items[i]);
         attroff(A_REVERSE);
     }
     refresh();
@@ -266,7 +266,7 @@ void show_pause_menu() {
             if (i == menu_choice) {
                 attron(A_REVERSE);
             }
-            mvprintw(y/2+i, x/2-5, menu_items[i]);
+            mvprintw(y/2+i, x/2-5, "%s", menu_items[i]);
             attroff(A_REVERSE);
         }
         refresh();
@@ -653,7 +653,7 @@ void draw_light(STATE *st, char key, char map[ROWS][COLS]){
 	}
 }
 
-void remove_light(STATE *st, char key, char map[ROWS][COLS]){
+void remove_light(char map[ROWS][COLS]){
 	for(int i = 0; i<ROWS ; i++){
 		for(int j = 0; j<COLS; j++){
 			if(map[i][j] == '.'){
@@ -720,7 +720,7 @@ void kill(STATE *st,char map[ROWS][COLS]){
 void update(STATE *st,char map[ROWS][COLS]) {
 	int key = getch();
 	mvaddch(st->player->playerY,st->player->playerX, ' ');
-	remove_light(st,key,map);
+	remove_light(map);
 	switch(key) {
 		case 'w': if(valid_move(st,(int)'w',map)) do_movement_action(st, +0, -1,map); break;
 		case 's': if(valid_move(st,(int)'s',map)) do_movement_action(st, +0, +1,map); break;
@@ -760,8 +760,8 @@ int main(){
 	//st->monstros = malloc(sizeof(MONSTER)*10);
 	inicializa_state(st);
 	WINDOW *wnd = initscr();
-	int ncols, nrows;
-	getmaxyx(wnd,nrows,ncols);
+	int nrows;
+	nrows = getmaxx(wnd);
 	//roguelite(wnd);
 	show_main_menu();
 	char map[ROWS][COLS];
