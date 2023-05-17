@@ -30,6 +30,7 @@ typedef struct{
     int monsterY;
     int monsterHealth;
     int monsterAttack;
+	bool is_visible;
 } MONSTER;
 
 MONSTER monster;
@@ -380,6 +381,14 @@ void set_monsterAttack(STATE *st, int attack){
 }
 */
 
+double distancia(PLAYER *player, MONSTER *monster){
+	double resultado = 0.0;
+	int dx = abs(player->playerX - monster->monsterX);
+	int dy = abs(player->playerY - monster->monsterY);
+	resultado =  sqrt(dx * dx + dy * dy);
+	return resultado;
+}
+
 void spawn_mobs(STATE *st, char map[ROWS][COLS]) {
     // Inicializa o gerador de números aleatórios
     srand(time(NULL));
@@ -398,6 +407,7 @@ void spawn_mobs(STATE *st, char map[ROWS][COLS]) {
         get_monsters(st)[i].monsterY = y;
         get_monsters(st)[i].monsterHealth = 10;//rand() % 10 + 1;
         get_monsters(st)[i].monsterAttack = rand() % 5 + 1;
+		get_monsters(st)[i].is_visible = false;
         
         // Define o par de cor 1 como vermelho
 		init_pair(1, COLOR_RED, COLOR_BLACK);
@@ -438,20 +448,26 @@ void move_mobs(STATE *st, char map[ROWS][COLS]) {
 			// Ativa a cor vermelha para imprimir o monstro
 			attron(COLOR_PAIR(1));
 			map[get_monsters(st)[i].monsterY][get_monsters(st)[i].monsterX] = '!';
-			mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, '!');
+			double dist = distancia(st->player,&st->monstros[i]);
+			if(dist<3)
+				st->monstros[i].is_visible = true;
+			if(only_dots){
+				if(get_monsters(st)[i].is_visible)
+					mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, '!');
+			}
+			else{
+				mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, '!');
+			}
 			attroff(COLOR_PAIR(1));
 		}
     }
 }
-
-
 
 bool is_monster(char c){
 	bool resultado = false;
 	if(c == '!') resultado = true;
 	return resultado;
 }
-
 
 void inicializa_monster(MONSTER monstros[],int N){
 	for(int i = 0; i<N ; i++){
@@ -461,7 +477,6 @@ void inicializa_monster(MONSTER monstros[],int N){
 		monstros[i].monsterX = 25 + 5*i;
 	}
 }
-
 
 void set_player(STATE *st){
 	st->player = malloc(sizeof(PLAYER));
@@ -641,57 +656,6 @@ void remove_light(STATE *st, char key, char map[ROWS][COLS]){
 			}
 		}
 	}
-	/*
-	if(is_move_left((int)key)){
-		if(mvinch(get_playerY(st), get_playerX(st)-3) == '.') map[get_playerY(st)][get_playerX(st)-3] =  ' ';
-		if(mvinch(get_playerY(st)-1, get_playerX(st)-3) == '.') map[get_playerY(st)-1][get_playerX(st)-3] =  ' ';
-		if(mvinch(get_playerY(st)+1, get_playerX(st)-3) == '.') map[get_playerY(st)+1][get_playerX(st)-3] =  ' ';
-		if(mvinch(get_playerY(st)-2, get_playerX(st)-3) == '.') map[get_playerY(st)-2][get_playerX(st)-3] =  ' ';
-		if(mvinch(get_playerY(st)+2, get_playerX(st)-3) == '.') map[get_playerY(st)+2][get_playerX(st)-3] =  ' ';
-		if(mvinch(get_playerY(st), get_playerX(st)-2) == '.') map[get_playerY(st)][get_playerX(st)-2] =  ' ';
-		if(mvinch(get_playerY(st)-1, get_playerX(st)-2) == '.') map[get_playerY(st)-1][get_playerX(st)-2] =  ' ';
-		if(mvinch(get_playerY(st)+1, get_playerX(st)-2) == '.') map[get_playerY(st)+1][get_playerX(st)-2] =  ' ';
-		if(mvinch(get_playerY(st), get_playerX(st)-1) == '.') map[get_playerY(st)][get_playerX(st)-1] =  ' ';
-	}
-	if(is_move_up((int)key)){
-		if(mvinch(get_playerY(st)-3, get_playerX(st)) == '.') map[get_playerY(st)-3][get_playerX(st)] =  ' ';
-		if(mvinch(get_playerY(st)-3, get_playerX(st)-1) == '.') map[get_playerY(st)-3][get_playerX(st)-1] =  ' ';
-		if(mvinch(get_playerY(st)-3, get_playerX(st)+1) == '.') map[get_playerY(st)-3][get_playerX(st)+1] =  ' ';
-		if(mvinch(get_playerY(st)-3, get_playerX(st)-2) == '.') map[get_playerY(st)-3][get_playerX(st)-2] =  ' ';
-		if(mvinch(get_playerY(st)-3, get_playerX(st)+2) == '.') map[get_playerY(st)-3][get_playerX(st)+2] =  ' ';
-		if(mvinch(get_playerY(st)-2, get_playerX(st)) == '.') map[get_playerY(st)-2][get_playerX(st)] =  ' ';
-		if(mvinch(get_playerY(st)-2, get_playerX(st)-1) == '.') map[get_playerY(st)-2][get_playerX(st)-2] =  ' ';
-		if(mvinch(get_playerY(st)-2, get_playerX(st)+1) == '.') map[get_playerY(st)-2][get_playerX(st)+1] =  ' ';
-		if(mvinch(get_playerY(st)-1, get_playerX(st)) == '.') map[get_playerY(st)-1][get_playerX(st)] =  ' ';
-	}
-	if(is_move_right((int)key)){
-		if(mvinch(get_playerY(st), get_playerX(st)+3) == '.') map[get_playerY(st)][get_playerX(st)+3] =  ' ';
-		if(mvinch(get_playerY(st)-1, get_playerX(st)+3) == '.') map[get_playerY(st)-1][get_playerX(st)+3] =  ' ';
-		if(mvinch(get_playerY(st)+1, get_playerX(st)+3) == '.') map[get_playerY(st)+1][get_playerX(st)+3] =  ' ';
-		if(mvinch(get_playerY(st)-2, get_playerX(st)+3) == '.') map[get_playerY(st)-2][get_playerX(st)+3] =  ' ';
-		if(mvinch(get_playerY(st)+2, get_playerX(st)+3) == '.') map[get_playerY(st)+2][get_playerX(st)+3] =  ' ';
-		if(mvinch(get_playerY(st), get_playerX(st)+2) == '.') map[get_playerY(st)][get_playerX(st)+2] =  ' ';
-		if(mvinch(get_playerY(st)-1, get_playerX(st)+2) == '.') map[get_playerY(st)-1][get_playerX(st)+2] =  ' ';
-		if(mvinch(get_playerY(st)+1, get_playerX(st)+2) == '.') map[get_playerY(st)+1][get_playerX(st)+2] =  ' ';
-		if(mvinch(get_playerY(st), get_playerX(st)+1) == '.') map[get_playerY(st)][get_playerX(st)+1] =  ' ';
-	}
-	if(is_move_down((int)key)){
-		if(mvinch(get_playerY(st)+3, get_playerX(st)) == '.') map[get_playerY(st)+3][get_playerX(st)] =  ' ';
-		if(mvinch(get_playerY(st)+3, get_playerX(st)-1) == '.') map[get_playerY(st)+3][get_playerX(st)-1] =  ' ';
-		if(mvinch(get_playerY(st)+3, get_playerX(st)+1) == '.') map[get_playerY(st)+3][get_playerX(st)+1] =  ' ';
-		if(mvinch(get_playerY(st)+3, get_playerX(st)-2) == '.') map[get_playerY(st)+3][get_playerX(st)-2] =  ' ';
-		if(mvinch(get_playerY(st)+3, get_playerX(st)+2) == '.') map[get_playerY(st)+3][get_playerX(st)+2] =  ' ';
-		if(mvinch(get_playerY(st)+2, get_playerX(st)) == '.') map[get_playerY(st)+2][get_playerX(st)] =  ' ';
-		if(mvinch(get_playerY(st)+2, get_playerX(st)-1) == '.') map[get_playerY(st)+2][get_playerX(st)-1] =  ' ';
-		if(mvinch(get_playerY(st)+2, get_playerX(st)+1) == '.') map[get_playerY(st)+2][get_playerX(st)+1] =  ' ';
-		if(mvinch(get_playerY(st)+1, get_playerX(st)) == '.') map[get_playerY(st)+1][get_playerX(st)] =  ' ';
-	}
-	for(int i = 0; i<ROWS ; i++){
-		for(int j = 0; j<COLS; j++){
-			if(map[i][j] == ' ') mvaddch(i,j,' ');
-		}
-	}
-	*/
 }
 
 void draw_player(STATE *st,char map[ROWS][COLS]){
@@ -704,14 +668,6 @@ void draw_player(STATE *st,char map[ROWS][COLS]){
 	}
     attroff(COLOR_PAIR(COLOR_WHITE));
 	refresh();
-}
-
-double distancia(PLAYER *player, MONSTER *monster){
-	double resultado = 0.0;
-	int dx = abs(player->playerX - monster->monsterX);
-	int dy = abs(player->playerY - monster->monsterY);
-	resultado =  sqrt(dx * dx + dy * dy);
-	return resultado;
 }
 
 
