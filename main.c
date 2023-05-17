@@ -380,7 +380,7 @@ void set_monsterAttack(STATE *st, int attack){
 }
 */
 
-void spawn_mobs(STATE *st) {
+void spawn_mobs(STATE *st, char map[ROWS][COLS]) {
     // Inicializa o gerador de números aleatórios
     srand(time(NULL));
     
@@ -391,12 +391,12 @@ void spawn_mobs(STATE *st) {
             // Gera uma posição aleatória
             x = rand() % COLS;
             y = rand() % ROWS;
-        } while (mvinch(y, x) == '#'); // Verifica se a posição é uma parede
+        } while (map[y][x] == '#' || map[y][x] == '@'); // Verifica se a posição é uma parede
         
         // Inicializa o monstro com a posição gerada e atributos aleatórios
         get_monsters(st)[i].monsterX = x;
         get_monsters(st)[i].monsterY = y;
-        get_monsters(st)[i].monsterHealth = rand() % 10 + 1;
+        get_monsters(st)[i].monsterHealth = 10;//rand() % 10 + 1;
         get_monsters(st)[i].monsterAttack = rand() % 5 + 1;
         
         // Define o par de cor 1 como vermelho
@@ -404,7 +404,8 @@ void spawn_mobs(STATE *st) {
 
 		// Ativa a cor vermelha para imprimir o monstro
 		attron(COLOR_PAIR(1));
-		mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, '!');
+		map[get_monsters(st)[i].monsterY][get_monsters(st)[i].monsterX] = '!';
+		//mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, '!');
 		attroff(COLOR_PAIR(1));
 
     }
@@ -419,11 +420,13 @@ void move_mobs(STATE *st, char map[ROWS][COLS]) {
 				// Gera uma posição aleatória adjacente
 				x = get_monsters(st)[i].monsterX + rand() % 3 - 1;
 				y = get_monsters(st)[i].monsterY + rand() % 3 - 1;
-			} while (map[y][x] == '#'); // Verifica se a posição é uma parede
+			} while (map[y][x] == '#' || map[y][x] == '@'); // Verifica se a posição é uma parede ou o jogador
 			
 			// Apaga o monstro da posição anterior
-			if(mvinch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX) != '#')
+			if(map[get_monsters(st)[i].monsterY][get_monsters(st)[i].monsterX] != '#' || map[get_monsters(st)[i].monsterY][get_monsters(st)[i].monsterX] != '@'){
 				mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, ' ');
+				map[get_monsters(st)[i].monsterY][get_monsters(st)[i].monsterX] = ' ';
+			}
 			
 			// Atualiza a posição do monstro
 			get_monsters(st)[i].monsterX = x;
@@ -434,6 +437,7 @@ void move_mobs(STATE *st, char map[ROWS][COLS]) {
 
 			// Ativa a cor vermelha para imprimir o monstro
 			attron(COLOR_PAIR(1));
+			map[get_monsters(st)[i].monsterY][get_monsters(st)[i].monsterX] = '!';
 			mvaddch(get_monsters(st)[i].monsterY, get_monsters(st)[i].monsterX, '!');
 			attroff(COLOR_PAIR(1));
 		}
@@ -466,7 +470,7 @@ void set_player(STATE *st){
 void inicializa_state(STATE *st){
 	set_player(st);
 	inicializa_player(st);
-	inicializa_monster(st->monstros,10);
+	//inicializa_monster(st->monstros,10);
 }
 
 void do_movement_action(STATE *st, int dx, int dy,char map[ROWS][COLS]) {
@@ -712,12 +716,13 @@ MONSTER *get_monster(STATE *st){
 	return resultado;
 }
 
-void remove_monster(MONSTER *monster,char map[ROWS][COLS]){
-	int x = monster->monsterX;
-	int y = monster->monsterY;
-	//map[y][x] = ' ';
-	//mvaddch(y,x,' ');
-	//monster = NULL;
+void remove_monster(MONSTER **monster,char map[ROWS][COLS]){
+	int x = (*monster)->monsterX;
+	int y = (*monster)->monsterY;
+	map[y][x] = ' ';
+	mvaddch(y,x,' ');
+	//free(*monster);
+	*monster = NULL;
 }
 
 
@@ -727,10 +732,13 @@ void kill(STATE *st,char map[ROWS][COLS]){
 	if(monstro != NULL){
 		monstro->monsterHealth -= st->player->playerAttack;
 		st->player->playerHealth -= monstro->monsterAttack;
-	}
 
-	if(monstro->monsterHealth <= 0) remove_monster(monstro,map);
+		if(monstro->monsterHealth <= 0){
+			remove_monster(&monstro,map);
+		}
+	}
 	if(st->player->playerHealth <= 0){
+		st->player = NULL;
 		endwin();
 		//game_over();
 	}
@@ -878,21 +886,21 @@ int main(){
 	}
 	while(is_parede((int)map[st->player->playerY][st->player->playerX]) || st->player->playerY > ROWS-1 || st->player->playerX > COLS-1);
 	clear();
+	spawn_mobs(st,map);
 	for (int i = 0; i < ROWS; i++) {
 		for (int j = 0; j < COLS; j++) {
 			mvaddch(i, j, map[i][j]);
 		}
 	}
-	spawn_mobs(st);
 	while(1) {
 		move(nrows - 1, 0);
 		attron(COLOR_PAIR(COLOR_BLUE));
 		if(st->player != NULL){
-			printw("Player state: \n");
-			printw("	Health: %d\n",get_playerHealth(st));
-			printw("	Atack: %d \n",get_playerAtack(st));
+			mvprintw(ROWS-30, COLS +4,"Player state:");
+			mvprintw(ROWS-27,COLS+3,"	Health: %d",get_playerHealth(st));
+			mvprintw(ROWS-25,COLS+3,"	Atack: %d",get_playerAtack(st));
 		}
-		printw("(%d, %d) %d %d\n", get_playerX(st), get_playerY(st), ncols, nrows);
+		mvprintw(ROWS-23,COLS+4,"Posição: (%d, %d) %d %d\n", get_playerX(st), get_playerY(st), ncols, nrows);
 		attroff(COLOR_PAIR(COLOR_BLUE));
 		refresh();
 		move(get_playerY(st), get_playerX(st));
