@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS= -Wall -Wextra -pedantic -O2 #-Iincludes
-LIBS= -lm -lcurses
+LIBS= -lm -lcurses -lasound
 
 jogo:  main.o#src/player.o src/monsters.o src/state.o   src/testeGeraMapa.o src/menus.o
 	$(CC) $(CFLAGS) -o $@ $< $(LIBS)

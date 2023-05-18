@@ -33,6 +33,7 @@ typedef struct{
     int monsterHealth;
     int monsterAttack;
 	bool is_visible;
+    bool is_dead;
 } MONSTER;
 
 typedef struct state {
@@ -296,9 +297,9 @@ void show_pause_menu() {
     }
 }
 
-/*
+
 void playSound(const char* filename) {
-	//abrir dispositivo de audio
+    // abrir dispositivo de áudio
     snd_pcm_t *handle;
     snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
 
@@ -316,18 +317,32 @@ void playSound(const char* filename) {
     fseek(file, 0, SEEK_END);
     long fileSize = ftell(file);
     rewind(file);
-    char *buffer = malloc(fileSize);
-    fread(buffer, sizeof(char), fileSize, file);
+
+    // Calcular o número de amostras correspondentes a 1 segundo
+    int sampleRate = 44100;  // Taxa de amostragem em Hz
+    int numChannels = 1;     // Número de canais
+    int bytesPerSample = 2;  // Tamanho de cada amostra em bytes (16 bits = 2 bytes)
+    int samplesPerSecond = sampleRate * numChannels;
+    int bytesPerSecond = samplesPerSecond * bytesPerSample;
+    int desiredSeconds = 1;  // Duração desejada em segundos
+    int desiredBytes = desiredSeconds * bytesPerSecond;
+
+    // Alocar o buffer para 1 segundo de áudio
+    char *buffer = malloc(desiredBytes);
+
+    // Ler apenas 1 segundo do arquivo de áudio
+    fread(buffer, sizeof(char), desiredBytes, file);
     fclose(file);
 
-    // Reproduza o áudio
-    snd_pcm_writei(handle, buffer, fileSize / 2);  // Divida por 2, pois o tamanho do buffer é em bytes
+    // Reproduzir o áudio
+    snd_pcm_writei(handle, buffer, desiredBytes / 2);  // Dividir por 2, pois o tamanho do buffer é em bytes
 
     snd_pcm_drain(handle);
     snd_pcm_close(handle);
     free(buffer);
 }
 
+/*
 // esta função apenas está definida para um monstro, falta generalizar
 void monster_attack(STATE *st, char map[ROWS][COLS]) {
     if (distancia) {  // Jogador ataca monstros em uma distância de 1 bloco
@@ -387,9 +402,10 @@ void spawn_mobs(STATE *st, char map[ROWS][COLS]) {
         // Inicializa o monstro com a posição gerada e atributos aleatórios
         st->monstros[i].monsterX = x;
         st->monstros[i].monsterY = y;
-        st->monstros[i].monsterHealth = 10;//rand() % 10 + 1;
+        st->monstros[i].monsterHealth = rand() % 10 + 1;
         st->monstros[i].monsterAttack = rand() % 5 + 1;
 		st->monstros[i].is_visible = false;
+        st->monstros[i].is_dead = false;
         
         // Define o par de cor 1 como vermelho
 		init_pair(1, COLOR_RED, COLOR_BLACK);
@@ -405,7 +421,7 @@ void spawn_mobs(STATE *st, char map[ROWS][COLS]) {
 
 void move_mobs(STATE* st, char map[ROWS][COLS]) {
     for (int i = 0; i < 10; i++) {
-        if (&st->monstros[i] != NULL) {
+        if (st->monstros[i].is_dead == false) {
             int playerX = st->player->playerX;
             int playerY = st->player->playerY;
             int closestX = st->monstros[i].monsterX;
@@ -599,6 +615,39 @@ void game_over() {
     endwin();
 }
 
+
+void you_won() {
+    // Configura a janela
+    int height = 3; // altura da janela
+    int width = 10; // largura da janela
+    int starty = (LINES - height) / 2; // posição y da janela
+    int startx = (COLS - width) / 2; // posição x da janela
+    WINDOW *win = newwin(height, width, starty, startx); // cria a janela
+    box(win, 0, 0); // adiciona uma borda à janela
+    refresh();
+    wrefresh(win);
+
+    // Configura as cores
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(3, COLOR_BLUE, COLOR_BLACK);
+    wbkgd(win, COLOR_PAIR(1));
+
+    // Imprime a mensagem na janela
+    wattron(win, COLOR_PAIR(3));
+    mvwprintw(win, 1, 3, "WIN!");
+    wattroff(win, COLOR_PAIR(3));
+
+    // Espera 3 segundos antes de fechar a janela
+    wrefresh(win);
+    sleep(3);
+
+    // Libera a janela
+    delwin(win);
+    endwin();
+}
+
 bool dentro_mapa(int y, int x){
 	bool resultado = true;
 	if(y<1 || y>ROWS-1 || x<1 || x>COLS-1) resultado = false;
@@ -698,7 +747,7 @@ MONSTER *get_monster(STATE *st){
 	}
 	return resultado;
 }
-
+/*
 void remove_monster(MONSTER **monster,char map[ROWS][COLS]){
 	int x = (*monster)->monsterX;
 	int y = (*monster)->monsterY;
@@ -707,17 +756,20 @@ void remove_monster(MONSTER **monster,char map[ROWS][COLS]){
 	//free(*monster);
 	*monster = NULL;
 }
-
+*/
 
 void kill(STATE *st,char map[ROWS][COLS]){
 	
 	MONSTER *monstro = get_monster(st);
 	if(monstro != NULL){
 		monstro->monsterHealth -= st->player->playerAttack;
+        playSound("monster_attack.wav");
 		st->player->playerHealth -= monstro->monsterAttack;
 
 		if(monstro->monsterHealth <= 0){
-			remove_monster(&monstro,map);
+			monstro->is_dead = true;
+            map[monstro->monsterY][monstro->monsterX] = ' ';
+            mvaddch(monstro->monsterY,monstro->monsterX,' ');
 		}
 	}
 	if(st->player->playerHealth <= 0){
@@ -725,6 +777,14 @@ void kill(STATE *st,char map[ROWS][COLS]){
 		//endwin();
 		game_over();
 	}
+    bool win = true;
+    for(int i = 0; i<10 ; i++){
+        if(st->monstros[i].is_dead == true) win = win && true;
+        else win = false;
+    }
+    if(win){
+        you_won();
+    }
 
 }
 
