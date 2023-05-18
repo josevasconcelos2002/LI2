@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+#include <alsa/asoundlib.h>
 //#include "player.h"
 //#include "state.h"
 //#include "monsters.h"
@@ -273,21 +274,72 @@ void show_pause_menu() {
     }
 }
 
-// esta função apenas está definida para um monstro, falta generalizar
 /*
-void monster_attack(STATE *st) {
-    int dx = st->monster->monsterX - st->player->playerX;
-    int dy = st->monster->monsterY - st->player->playerY;
+void playSound(const char* filename) {
+	//abrir dispositivo de audio
+    snd_pcm_t *handle;
+    snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
 
-	// Calcula a distância entre o monstro e o jogador
-    int distance = abs(dx) + abs(dy);
+    // parâmetros do formato de áudio desejados
+    snd_pcm_set_params(handle,
+                       SND_PCM_FORMAT_S16_LE,    // Formato do áudio
+                       SND_PCM_ACCESS_RW_INTERLEAVED,
+                       1,                        // Número de canais
+                       44100,                    // Taxa de amostragem
+                       1,                        // Permitir resampling
+                       50000);                   // Latência desejada em microssegundos
 
-	if (distance == 1){
-		while (st->player->playerHealth > 0) {
-			st->monster -> monsterHealth -= 15;
-			st->player -> playerHealth -= 5;
-		}
-	}
+    // Carregar o arquivo de áudio
+    FILE *file = fopen(filename, "rb");
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    rewind(file);
+    char *buffer = malloc(fileSize);
+    fread(buffer, sizeof(char), fileSize, file);
+    fclose(file);
+
+    // Reproduza o áudio
+    snd_pcm_writei(handle, buffer, fileSize / 2);  // Divida por 2, pois o tamanho do buffer é em bytes
+
+    snd_pcm_drain(handle);
+    snd_pcm_close(handle);
+    free(buffer);
+}
+
+// esta função apenas está definida para um monstro, falta generalizar
+void monster_attack(STATE *st, char map[ROWS][COLS]) {
+    int i;
+    for (i = 0; i < 10; i++) {
+        int dx = abs(player->playerX - monsters[i].monsterX);
+        int dy = abs(player->playerY - monsters[i].monsterY);
+
+        if (distancia) {  // Jogador ataca monstros em uma distância de 1 bloco
+            monsters[i].monsterHealth -= player->playerAttack;
+
+            if (monsters[i].monsterHealth <= 0) {
+                // Monstro morto, remove do mapa
+				remove_monster(&monsters[i], map);
+
+                // Desenhe novamente o mapa atualizado
+                // Implemente aqui o código para redesenhar o mapa com os monstros atualizados
+
+                // Remova o monstro da lista de monstros
+                int j;
+                for (j = i; j < 9; j++) {
+                    monsters[j] = monsters[j + 1];
+                }
+            } else {
+                // Monstro atacou o jogador
+                playSound("monster_attack.wav");  // Reproduz o som de ataque do monstro
+                player->playerHealth -= monsters[i].monsterAttack;
+
+                if (player->playerHealth <= 0) {
+                    // Jogador morreu, fim do jogo
+                    // Implemente aqui o código para encerrar o jogo
+                }
+            }
+        }
+    }
 }
 */
 bool only_dots = false;
