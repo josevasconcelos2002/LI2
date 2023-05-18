@@ -315,7 +315,7 @@ void playSound(const char* filename) {
     // Carregar o arquivo de áudio
     FILE *file = fopen(filename, "rb");
     fseek(file, 0, SEEK_END);
-    long fileSize = ftell(file);
+    //long fileSize = ftell(file);
     rewind(file);
 
     // Calcular o número de amostras correspondentes a 1 segundo
@@ -411,9 +411,10 @@ void spawn_mobs(STATE *st, char map[ROWS][COLS]) {
 		init_pair(1, COLOR_RED, COLOR_BLACK);
 
 		// Ativa a cor vermelha para imprimir o monstro
+        start_color();
 		attron(COLOR_PAIR(1));
 		map[st->monstros[i].monsterY][st->monstros[i].monsterX] = '!';
-		//mvaddch(st->monstros[i].monsterY, st->monstros[i].monsterX, '!');
+		mvaddch(st->monstros[i].monsterY, st->monstros[i].monsterX, '!');
 		attroff(COLOR_PAIR(1));
 
     }
@@ -485,7 +486,7 @@ void move_mobs(STATE* st, char map[ROWS][COLS]) {
                 mvaddch(prevY, prevX, ' ');
                 map[prevY][prevX] = ' ';
             }
-
+            start_color();
             init_pair(1, COLOR_RED, COLOR_BLACK);
             attron(COLOR_PAIR(1));
             map[st->monstros[i].monsterY][st->monstros[i].monsterX] = '!';
@@ -656,7 +657,6 @@ bool dentro_mapa(int y, int x){
 
 void draw_light(STATE *st, char key, char map[ROWS][COLS]){
 	if(is_move_left((int)key) && valid_move(st,(int)key,map)){
-			attron(COLOR_PAIR(COLOR_YELLOW));
 		if(dentro_mapa(st->player->playerY,st->player->playerX-3) && !is_parede(map[st->player->playerY][st->player->playerX-3]) && !is_monster(map[st->player->playerY][st->player->playerX-3])) map[st->player->playerY][st->player->playerX-3] = '.';
 		if(dentro_mapa(st->player->playerY-1,st->player->playerX-3) &&!is_parede(map[st->player->playerY-1][st->player->playerX-3]) && !is_monster(map[st->player->playerY-1][st->player->playerX-3])) map[st->player->playerY-1][st->player->playerX-3] = '.';
 		if(dentro_mapa(st->player->playerY+1,st->player->playerX-3) &&!is_parede(map[st->player->playerY+1][st->player->playerX-3]) && !is_monster(map[st->player->playerY+1][st->player->playerX-3])) map[st->player->playerY+1][st->player->playerX-3] = '.';
@@ -666,10 +666,8 @@ void draw_light(STATE *st, char key, char map[ROWS][COLS]){
 		if(dentro_mapa(st->player->playerY-1,st->player->playerX-2) &&!is_parede(map[st->player->playerY-1][st->player->playerX-2]) && !is_monster(map[st->player->playerY-1][st->player->playerX-2])) map[st->player->playerY-1][st->player->playerX-2] = '.';
 		if(dentro_mapa(st->player->playerY+1,st->player->playerX-2) &&!is_parede(map[st->player->playerY+1][st->player->playerX-2]) && !is_monster(map[st->player->playerY+1][st->player->playerX-2])) map[st->player->playerY+1][st->player->playerX-2] = '.';
 		if(dentro_mapa(st->player->playerY,st->player->playerX-1) &&!is_parede(map[st->player->playerY][st->player->playerX-1]) && !is_monster(map[st->player->playerY][st->player->playerX-1])) map[st->player->playerY][st->player->playerX-1] = '.';
-			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_up((int)key)&& valid_move(st,(int)key,map)){
-			attron(COLOR_PAIR(COLOR_YELLOW));
 		if(dentro_mapa(st->player->playerY-3,st->player->playerX) &&!is_parede(map[st->player->playerY-3][st->player->playerX]) && !is_monster(map[st->player->playerY-3][st->player->playerX])) map[st->player->playerY-3][st->player->playerX] =  '.';
 		if(dentro_mapa(st->player->playerY-3,st->player->playerX-1) &&!is_parede(map[st->player->playerY-3][st->player->playerX-1]) && !is_monster(map[st->player->playerY-3][st->player->playerX-1])) map[st->player->playerY-3][st->player->playerX-1] =  '.';
 		if(dentro_mapa(st->player->playerY-3,st->player->playerX+1) &&!is_parede(map[st->player->playerY-3][st->player->playerX+1]) && !is_monster(map[st->player->playerY-3][st->player->playerX+1])) map[st->player->playerY-3][st->player->playerX+1] =  '.';
@@ -679,10 +677,8 @@ void draw_light(STATE *st, char key, char map[ROWS][COLS]){
 		if(dentro_mapa(st->player->playerY-2,st->player->playerX-1) &&!is_parede(map[st->player->playerY-2][st->player->playerX-1]) && !is_monster(map[st->player->playerY-2][st->player->playerX-1])) map[st->player->playerY-2][st->player->playerX-1] =  '.';
 		if(dentro_mapa(st->player->playerY-2,st->player->playerX+1) &&!is_parede(map[st->player->playerY-2][st->player->playerX+1]) && !is_monster(map[st->player->playerY-2][st->player->playerX+1])) map[st->player->playerY-2][st->player->playerX+1] =  '.';
 		if(dentro_mapa(st->player->playerY-1,st->player->playerX) &&!is_parede(map[st->player->playerY-1][st->player->playerX]) && !is_monster(map[st->player->playerY-1][st->player->playerX])) map[st->player->playerY-1][st->player->playerX] =  '.';
-			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_right((int)key)&& valid_move(st,(int)key,map)){
-			attron(COLOR_PAIR(COLOR_YELLOW));
 		if(dentro_mapa(st->player->playerY,st->player->playerX+3) &&!is_parede(map[st->player->playerY][st->player->playerX+3]) && !is_monster(map[st->player->playerY][st->player->playerX+3])) map[st->player->playerY][st->player->playerX+3] =  '.';
 		if(dentro_mapa(st->player->playerY-1,st->player->playerX+3) &&!is_parede(map[st->player->playerY-1][st->player->playerX+3]) && !is_monster(map[st->player->playerY-1][st->player->playerX+3])) map[st->player->playerY-1][st->player->playerX+3] =  '.';
 		if(dentro_mapa(st->player->playerY+1,st->player->playerX+3) &&!is_parede(map[st->player->playerY+1][st->player->playerX+3]) && !is_monster(map[st->player->playerY+1][st->player->playerX+3])) map[st->player->playerY+1][st->player->playerX+3] =  '.';
@@ -692,10 +688,8 @@ void draw_light(STATE *st, char key, char map[ROWS][COLS]){
 		if(dentro_mapa(st->player->playerY-1,st->player->playerX+2) &&!is_parede(map[st->player->playerY-1][st->player->playerX+2]) && !is_monster(map[st->player->playerY-1][st->player->playerX+2])) map[st->player->playerY-1][st->player->playerX+2] =  '.';
 		if(dentro_mapa(st->player->playerY+1,st->player->playerX+2) &&!is_parede(map[st->player->playerY+1][st->player->playerX+2]) && !is_monster(map[st->player->playerY+1][st->player->playerX+2])) map[st->player->playerY+1][st->player->playerX+2] =  '.';
 		if(dentro_mapa(st->player->playerY,st->player->playerX+1) &&!is_parede(map[st->player->playerY][st->player->playerX+1]) && !is_monster(map[st->player->playerY][st->player->playerX+1])) map[st->player->playerY][st->player->playerX+1] =  '.';
-			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	if(is_move_down((int)key)&& valid_move(st,(int)key,map)){
-			attron(COLOR_PAIR(COLOR_YELLOW));
 		if(dentro_mapa(st->player->playerY+3,st->player->playerX) &&!is_parede(map[st->player->playerY+3][st->player->playerX]) && !is_monster(map[(st->player->playerY+3)][st->player->playerX])) map[st->player->playerY+3][st->player->playerX] =  '.';
 		if(dentro_mapa(st->player->playerY+3,st->player->playerX-1) &&!is_parede(map[st->player->playerY+3][st->player->playerX-1]) && !is_monster(map[(st->player->playerY+3)][st->player->playerX-1])) map[st->player->playerY+3][st->player->playerX-1] =  '.';
 		if(dentro_mapa(st->player->playerY+3,st->player->playerX+1) &&!is_parede(map[st->player->playerY+3][st->player->playerX+1]) && !is_monster(map[(st->player->playerY+3)][st->player->playerX+1])) map[st->player->playerY+3][st->player->playerX+1] =  '.';
@@ -705,11 +699,14 @@ void draw_light(STATE *st, char key, char map[ROWS][COLS]){
 		if(dentro_mapa(st->player->playerY+2,st->player->playerX-1) &&!is_parede(map[st->player->playerY+2][st->player->playerX-1]) && !is_monster(map[(st->player->playerY+2)][st->player->playerX-1])) map[st->player->playerY+2][st->player->playerX-1] =  '.';
 		if(dentro_mapa(st->player->playerY+2,st->player->playerX+1) &&!is_parede(map[st->player->playerY+2][st->player->playerX+1]) && !is_monster(map[(st->player->playerY+2)][st->player->playerX+1])) map[st->player->playerY+2][st->player->playerX+1] =  '.';
 		if(dentro_mapa(st->player->playerY+1,st->player->playerX) &&!is_parede(map[st->player->playerY+1][st->player->playerX]) && !is_monster(map[(st->player->playerY+1)][st->player->playerX])) map[st->player->playerY+1][st->player->playerX] =  '.';
-			attroff(COLOR_PAIR(COLOR_YELLOW));
 	}
 	for(int i = 0; i<ROWS ; i++){
 		for(int j = 0; j<COLS; j++){
+            start_color();
+            init_pair(4,COLOR_YELLOW,COLOR_BLACK);
+            attron(COLOR_PAIR(4));
 			if(map[i][j] == '.') mvaddch(i,j,'.');
+            attroff(COLOR_PAIR(4));
 		}
 	}
 }
@@ -726,14 +723,16 @@ void remove_light(char map[ROWS][COLS]){
 }
 
 void draw_player(STATE *st,char map[ROWS][COLS]){
-	attron(COLOR_PAIR(COLOR_WHITE));
+    start_color();
+    init_pair(3,COLOR_WHITE,COLOR_BLACK);
+	attron(COLOR_PAIR(3));
 	map[st->player->playerY][st->player->playerX] = '@';
     for(int i = 0; i<ROWS ; i++){
 		for(int j = 0; j<COLS; j++){
 			if(map[i][j] == '@') mvaddch(i,j,'@');
 		}
 	}
-    attroff(COLOR_PAIR(COLOR_WHITE));
+    attroff(COLOR_PAIR(3));
 	refresh();
 }
 
@@ -847,14 +846,29 @@ int main(){
 	refresh();
     clear();
 	spawn_mobs(st,map);
+    draw_player(st,map);
 	for (int i = 0; i < ROWS; i++) {
 		for (int j = 0; j < COLS; j++) {
-			mvaddch(i, j, map[i][j]);
+            if(map[i][j] != '#' && map[i][j] != '@' && map[i][j] != '!'){
+                start_color();
+                init_pair(1, COLOR_BLACK, COLOR_BLACK);
+                attron(COLOR_PAIR(1));
+                mvaddch(i, j, map[i][j]);
+                attroff(COLOR_PAIR(1));
+            }
+            else{
+                start_color();
+                init_pair(1, COLOR_WHITE, COLOR_BLACK);
+                mvaddch(i, j, map[i][j]);
+                attroff(COLOR_PAIR(1));
+            }
 		}
 	}
 	while(1) {
 		move(nrows - 1, 0);
-		attron(COLOR_PAIR(COLOR_BLUE));
+        start_color();
+        init_pair(2,COLOR_BLUE, COLOR_BLACK);
+		attron(COLOR_PAIR(2));
 		if(st->player != NULL){
 			mvprintw(ROWS-30, COLS +4,"Player state:");
 			mvprintw(ROWS-27,COLS+3,"	Health: %d", st->player->playerHealth);
@@ -872,7 +886,7 @@ int main(){
 			mvprintw(ROWS-25,COLS+17,"	Atack: ");
 		}
 		//mvprintw(ROWS-23,COLS+4,"Posição: (%d, %d) %d %d\n", st->player->playerX, st->player->playerY, ncols, nrows);
-		attroff(COLOR_PAIR(COLOR_BLUE));
+		attroff(COLOR_PAIR(2));
 		refresh();
 		move(st->player->playerY, st->player->playerX);
 		update(st,map);
