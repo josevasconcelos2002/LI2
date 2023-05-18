@@ -407,15 +407,13 @@ void spawn_mobs(STATE *st, char map[ROWS][COLS]) {
 		st->monstros[i].is_visible = false;
         st->monstros[i].is_dead = false;
         
-        // Define o par de cor 1 como vermelho
-		init_pair(1, COLOR_RED, COLOR_BLACK);
-
 		// Ativa a cor vermelha para imprimir o monstro
         start_color();
-		attron(COLOR_PAIR(1));
+        init_pair(6, COLOR_RED, COLOR_BLACK);
+		attron(COLOR_PAIR(6));
 		map[st->monstros[i].monsterY][st->monstros[i].monsterX] = '!';
 		mvaddch(st->monstros[i].monsterY, st->monstros[i].monsterX, '!');
-		attroff(COLOR_PAIR(1));
+		attroff(COLOR_PAIR(6));
 
     }
 }
@@ -724,7 +722,7 @@ void remove_light(char map[ROWS][COLS]){
 
 void draw_player(STATE *st,char map[ROWS][COLS]){
     start_color();
-    init_pair(3,COLOR_WHITE,COLOR_BLACK);
+    init_pair(3,COLOR_GREEN,COLOR_BLACK);
 	attron(COLOR_PAIR(3));
 	map[st->player->playerY][st->player->playerX] = '@';
     for(int i = 0; i<ROWS ; i++){
@@ -856,11 +854,12 @@ int main(){
                 mvaddch(i, j, map[i][j]);
                 attroff(COLOR_PAIR(1));
             }
-            else{
+            else if(map[i][j] == '#'){
                 start_color();
-                init_pair(1, COLOR_WHITE, COLOR_BLACK);
+                init_pair(5, 8, COLOR_BLACK);
+                attron(COLOR_PAIR(5));
                 mvaddch(i, j, map[i][j]);
-                attroff(COLOR_PAIR(1));
+                attroff(COLOR_PAIR(5));
             }
 		}
 	}
@@ -876,14 +875,14 @@ int main(){
 		}
 		MONSTER *monstro = get_monster(st);
 		if(monstro != NULL){
-			mvprintw(ROWS-30, COLS +18,"Monster state:");
-			mvprintw(ROWS-27,COLS+17,"	Health: %d",monstro->monsterHealth);
-			mvprintw(ROWS-25,COLS+17,"	Atack: %d",monstro->monsterAttack);
+			mvprintw(ROWS-30, COLS +22,"Monster state:");
+			mvprintw(ROWS-27,COLS+21,"	Health: %d",monstro->monsterHealth);
+			mvprintw(ROWS-25,COLS+21,"	Atack: %d",monstro->monsterAttack);
 		}
 		else{
-			mvprintw(ROWS-30, COLS +18,"Monster state:");
-			mvprintw(ROWS-27,COLS+17,"	Health: ");
-			mvprintw(ROWS-25,COLS+17,"	Atack: ");
+			mvprintw(ROWS-30, COLS +22,"Monster state:");
+			mvprintw(ROWS-27,COLS+21,"	Health: ");
+			mvprintw(ROWS-25,COLS+21,"	Atack: ");
 		}
 		//mvprintw(ROWS-23,COLS+4,"Posição: (%d, %d) %d %d\n", st->player->playerX, st->player->playerY, ncols, nrows);
 		attroff(COLOR_PAIR(2));
