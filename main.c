@@ -407,7 +407,7 @@ void spawn_mobs(char map[ROWS][COLS], MOB *mobs[]) {
 
 void move_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
     for (int i = 0; i < 10; i++) {
-        if (mobs[i] != NULL) {
+        if (mobs[i]->is_dead == false) {
             int playerX = player->x;
             int playerY = player->y;
             int closestX = mobs[i]->x;
@@ -735,13 +735,20 @@ void kill(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]){
 
 void draw_mobs(MOB *mobs[]) {
     for(int i = 0; i < 10; i++) {
-        //if(mobs[i]->is_visible && !mobs[i]->is_dead) {
-        start_color();
-        init_pair(1, COLOR_RED, COLOR_BLACK);
-        attron(COLOR_PAIR(1));
-        mvaddch(mobs[i]->y , mobs[i]->x, '!');
-        attroff(COLOR_PAIR(1));
-        //}
+        if(only_dots && mobs[i]->is_visible && !mobs[i]->is_dead) {
+            start_color();
+            init_pair(1, COLOR_RED, COLOR_BLACK);
+            attron(COLOR_PAIR(1));
+            mvaddch(mobs[i]->y , mobs[i]->x, '!');
+            attroff(COLOR_PAIR(1));
+        }
+        else if(!mobs[i]->is_dead && !only_dots){
+            start_color();
+            init_pair(1, COLOR_RED, COLOR_BLACK);
+            attron(COLOR_PAIR(1));
+            mvaddch(mobs[i]->y , mobs[i]->x, '!');
+            attroff(COLOR_PAIR(1));
+        }
     }
 }
 
