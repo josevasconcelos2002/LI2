@@ -697,9 +697,11 @@ void draw_player(PLAYER *player, char map[ROWS][COLS]){
 MOB *get_mob(PLAYER *player, MOB *mobs[]){
 	MOB *resultado = NULL;
 	for(int i = 0; i<10 ; i++){
-		if(distancia(player,mobs[i]) == 1.0){
-			resultado = mobs[i];
-		}
+        if(player && mobs[i]){
+            if(distancia(player,mobs[i]) == 1.0){
+                resultado = mobs[i];
+            }
+        }
 	}
 	return resultado;
 }
@@ -718,20 +720,27 @@ void kill(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]){
             mvaddch(mob->y, mob->x, ' ');
 		}
 	}
+
 	if(player->hp <= 0){
-		player = NULL;
+		map[player->y][player->x] = ' ';
+        mvaddch(player->y,player->x, ' ');
 		//endwin();
 		game_over();
 	}
+
     bool win = true;
-    for(int i = 0; i<10 ; i++){
-        if(!mob[i].is_dead) win = false;
+    for(int i = 0; i < 10; i++){
+        if(!mobs[i]->is_dead) {
+            win = false;
+            break;
+        }
     }
+    
     if(win){
         you_won();
     }
-
 }
+
 
 void draw_mobs(MOB *mobs[]) {
     for(int i = 0; i < 10; i++) {
