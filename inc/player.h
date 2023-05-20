@@ -17,5 +17,6 @@ bool valid_move(PLAYER *player, char map[ROWS][COLS], char key);
 void draw_light(PLAYER *player, char map[ROWS][COLS]);
 void remove_light(char map[ROWS][COLS]);
 void draw_player(PLAYER *player, char map[ROWS][COLS]);
+void draw_pocao(char map[ROWS][COLS]);
 
 #endif

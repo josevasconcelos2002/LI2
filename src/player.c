@@ -4,7 +4,7 @@
 void inicializa_player(PLAYER *player){
     player->x = 15;
     player->y = 15;
-    player->hp = 50;
+    player->hp = 100;
     player->attack = 10;
 	player->only_dots = false;
 }
@@ -13,6 +13,10 @@ void do_movement_action(PLAYER *player, char map[ROWS][COLS], int dx, int dy) {
     map[player->y][player->x] = ' ';
 	player->x += dx;
 	player->y += dy;
+	if(map[player->y][player->x] == '+'){
+		player->hp += 20;
+		map[player->y][player->x] = '!';
+	}
 }
 
 bool valid_move(PLAYER *player, char map[ROWS][COLS], char key){
@@ -85,6 +89,29 @@ void light_left(int y, int x, char map[ROWS][COLS]) {
 	if(dentro_mapa(y,x+1) && map[y][x+1] == ' ') map[y][x+1] =  '.';
 	attroff(COLOR_PAIR(COLOR_YELLOW));
 }*/
+
+
+void draw_pocao(char map[ROWS][COLS]){
+	for (int i = 0; i < 10; i++) {
+		int x, y;
+		do {
+			// Gera uma posição aleatória
+			x = rand() % COLS;
+			y = rand() % ROWS;
+		} while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+');
+		map[y][x] = '+';
+	}
+	start_color();
+	init_pair(10,COLOR_RED,COLOR_BLACK);
+	for(int j = 0; j<ROWS ; j++){
+		for(int k = 0; k<COLS ; k++){
+			attron(COLOR_PAIR(10));
+			if(map[j][k] == '+') mvaddch(j,k,'+');
+			attroff(COLOR_PAIR(10));
+		}
+	}
+}
+
 
 void draw_light(PLAYER *player, char map[ROWS][COLS]){
     int centerX = player->x;

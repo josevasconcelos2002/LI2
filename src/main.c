@@ -82,6 +82,7 @@ int play_game(PLAYER *player, MOB *mobs[], char map[ROWS][COLS], int nrows) {
     draw_mobs(player, mobs, map);
     draw_player(player,map);
     draw_light(player, map);
+	draw_pocao(map);
 
 	while(1) {
 		move(nrows - 1, 0);

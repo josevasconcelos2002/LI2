@@ -9,7 +9,7 @@ void spawn_mobs(char map[ROWS][COLS], MOB *mobs[]) {
             // Gera uma posição aleatória
             x = rand() % COLS;
             y = rand() % ROWS;
-        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@'); // Verifica se a posição é uma parede
+        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+'); // Verifica se a posição é uma parede
         
         // Inicializa o monstro com a posição gerada e atributos aleatórios
         mobs[i]->x = x;
@@ -54,7 +54,7 @@ void move_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
                     } else if (direction == 3) {
                         y++;
                     }
-                } while (map[y][x] == '#' || map[y][x] == '@');
+                } while (map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+');
 
                 closestX = x;
                 closestY = y;
@@ -71,7 +71,8 @@ void move_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
                         int distance = abs(playerX - newX) + abs(playerY - newY);
 
                         if (dentro_mapa(newY, newX) && map[newY][newX] != '#'
-                            && map[newY][newX] != '@'  && map[newY][newX] != '!' && distance < minDistance) {
+                            && map[newY][newX] != '@'  && map[newY][newX] != '!' && distance < minDistance
+                            && map[newY][newX] != '+') {
                             closestX = newX;
                             closestY = newY;
                             minDistance = distance;
