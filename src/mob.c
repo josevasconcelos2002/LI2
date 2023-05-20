@@ -14,7 +14,7 @@ void spawn_mobs(char map[ROWS][COLS], MOB *mobs[]) {
         // Inicializa o monstro com a posição gerada e atributos aleatórios
         mobs[i]->x = x;
         mobs[i]->y = y;
-        mobs[i]->hp = rand() % 10 + 1;
+        mobs[i]->hp = rand() % 10 + 11;
         mobs[i]->attack = rand() % 5 + 1;
 		mobs[i]->is_visible = false;
         mobs[i]->is_dead = false;
@@ -99,16 +99,26 @@ double distancia(PLAYER *player, MOB *mob){
 	return sqrt(dx * dx + dy * dy);
 }
 
-MOB *get_mob(PLAYER *player, MOB *mobs[]){
-	MOB *resultado = NULL;
-	for(int i = 0; i<10 ; i++){
-        if(player && mobs[i]){
-            if(distancia(player,mobs[i]) == 1.0){
-                resultado = mobs[i];
-            }
+MOB *get_closest_mob(MOB *mobs[], PLAYER *player) {
+    MOB *closestMob = NULL;
+    int closestDistanceSquared = 20;
+
+    for (int i = 0; i < 10; i++) {
+        MOB *mob = mobs[i];
+        if (mob->is_dead || !mob->is_visible) {
+            continue;
         }
-	}
-	return resultado;
+
+        int dx = mob->x - player->x;
+        int dy = mob->y - player->y;
+
+        int distanceSquared = dx * dx + dy * dy;
+        if (distanceSquared < closestDistanceSquared) {
+            closestDistanceSquared = distanceSquared;
+            closestMob = mob;
+        }
+    }
+    return closestMob;
 }
 
 void playSound(const char* filename) {
@@ -155,101 +165,60 @@ void playSound(const char* filename) {
     free(buffer);
 }
 
-void game_over() {
-    // Configura a janela
-    int height = 3; // altura da janela
-    int width = 10; // largura da janela
-    int starty = (LINES - height) / 2; // posição y da janela
-    int startx = (COLS - width) / 2; // posição x da janela
-    WINDOW *win = newwin(height, width, starty, startx); // cria a janela
-    box(win, 0, 0); // adiciona uma borda à janela
-    refresh();
-    wrefresh(win);
-
-    // Configura as cores
-    start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    init_pair(2, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(3, COLOR_BLUE, COLOR_BLACK);
-    wbkgd(win, COLOR_PAIR(1));
-
-    // Imprime a mensagem na janela
-    wattron(win, COLOR_PAIR(3));
-    mvwprintw(win, 1, 3, "GAME OVER");
-    wattroff(win, COLOR_PAIR(3));
-
-    // Espera 3 segundos antes de fechar a janela
-    wrefresh(win);
-    sleep(3);
-
-    // Libera a janela
-    delwin(win);
-    endwin();
-}
-
-void you_won() {
-    // Configura a janela
-    int height = 3; // altura da janela
-    int width = 10; // largura da janela
-    int starty = (LINES - height) / 2; // posição y da janela
-    int startx = (COLS - width) / 2; // posição x da janela
-    WINDOW *win = newwin(height, width, starty, startx); // cria a janela
-    box(win, 0, 0); // adiciona uma borda à janela
-    refresh();
-    wrefresh(win);
-
-    // Configura as cores
-    start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    init_pair(2, COLOR_YELLOW, COLOR_BLACK);
-    init_pair(3, COLOR_BLUE, COLOR_BLACK);
-    wbkgd(win, COLOR_PAIR(1));
-
-    // Imprime a mensagem na janela
-    wattron(win, COLOR_PAIR(3));
-    mvwprintw(win, 1, 3, "WIN!");
-    wattroff(win, COLOR_PAIR(3));
-
-    // Espera 3 segundos antes de fechar a janela
-    wrefresh(win);
-    sleep(3);
-
-    // Libera a janela
-    delwin(win);
-    endwin();
-}
-
-void kill(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]){
-	
-	MOB *mob = get_mob(player, mobs);
+void player_attack(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]){
+	MOB *mob = get_closest_mob(mobs, player);
 	if(mob != NULL){
+        //playSound("player_attack.wav");
 		mob->hp -= player->attack;
-        playSound("monster_attack.wav");
-		player->hp -= mob->attack;
 
 		if(mob->hp <= 0){
-			mob->is_dead = true;
             map[mob->y][mob->x] = ' ';
             mvaddch(mob->y, mob->x, ' ');
+			mob->is_dead = true;
+            mob->is_visible = false;
 		}
 	}
+}
 
-	if(player->hp <= 0){
-		map[player->y][player->x] = ' ';
-        mvaddch(player->y,player->x, ' ');
-		//endwin();
-		game_over();
+void mob_attack(PLAYER *player, MOB *mobs[]){
+	MOB *mob = get_closest_mob(mobs, player);
+	if(mob != NULL && distancia(player, mob) < 1.5){
+        //playSound("monster_attack.wav");
+		player->hp -= mob->attack;
 	}
+}
 
-    bool win = true;
-    for(int i = 0; i < 10; i++){
-        if(!mobs[i]->is_dead) {
-            win = false;
-            break;
+bool is_mob_visible(MOB *mob, PLAYER *player, char map[ROWS][COLS]) {
+    int centerX = player->x;
+    int centerY = player->y;
+    int xOffset = 3;
+    int yOffset = 2;
+
+    for (int i = centerX - xOffset; i <= centerX + xOffset; i++) {
+        for (int j = centerY - yOffset; j <= centerY + yOffset; j++) {
+            if (map[j][i] == '!' && mob->x == i && mob->y == j) {
+                return true;
+            }
         }
     }
-    
-    if(win){
-        you_won();
+    return false;
+}
+
+void draw_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
+    for(int i = 0; i < 10; i++) {
+        if(player->only_dots && is_mob_visible(mobs[i], player, map) && !mobs[i]->is_dead) {
+            start_color();
+            init_pair(1, COLOR_RED, COLOR_BLACK);
+            attron(COLOR_PAIR(1));
+            mvaddch(mobs[i]->y , mobs[i]->x, '!');
+            attroff(COLOR_PAIR(1));
+        }
+        else if(!mobs[i]->is_dead && !player->only_dots && is_mob_visible(mobs[i], player, map)){
+            start_color();
+            init_pair(1, COLOR_RED, COLOR_BLACK);
+            attron(COLOR_PAIR(1));
+            mvaddch(mobs[i]->y , mobs[i]->x, '!');
+            attroff(COLOR_PAIR(1));
+        }
     }
 }

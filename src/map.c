@@ -142,3 +142,18 @@ void draw_map(char map[ROWS][COLS]) {
 		}
 	}
 }
+
+void desenha_pontos(char map[ROWS][COLS]) {
+    for(int i = 0; i < ROWS; i++) {
+        for(int j = 0; j < COLS; j++) {
+			if(map[i][j] == '#') {
+				mvaddch(i,j,' ');
+			}
+			if(map[i][j] == '.' && mvinch(i,j) == '!') {
+                mvaddch(i,j,'!');
+            }else if(map[i][j] == '.') {
+					mvaddch(i,j,'.');
+			}
+        }
+    }
+}

@@ -30,7 +30,7 @@ int show_main_menu() {
     refresh();
 
     // Aguarda a seleção do jogador
-    int c;
+    char c;
     while (1) {
         c = getch(); // Lê a entrada do jogador
         switch(c) {
@@ -46,6 +46,8 @@ int show_main_menu() {
                 break;
             case '\n':
                 return choice; // Retorna a escolha do jogador
+            default:
+                break;
         }
 
         // Atualiza o destaque da opção selecionada
@@ -62,27 +64,25 @@ int show_main_menu() {
     }
 }
 
-void show_pause_menu() {
+int show_pause_menu() {
     clear();
     int menu_choice = 0;
-    int x, y;
-    getmaxyx(stdscr, y, x);
 
     // Define as opções do menu
     const char *menu_items[] = {
         "Continuar",
-        "Recomecar",
+        "Voltar ao menu",
         "Sair"
     };
     int num_items = sizeof(menu_items) / sizeof(menu_items[0]);
 
     // Desenha o menu na tela
-    mvprintw(y/2-2, x/2-5, "Pause");
+    mvprintw(ROWS/2-2, COLS/2-5, "Pause");
     for (int i = 0; i < num_items; i++) {
         if (i == menu_choice) {
             attron(A_REVERSE);
         }
-        mvprintw(y/2+i, x/2-5, "%s", menu_items[i]);
+        mvprintw(ROWS/2+i, COLS/2-5, "%s", menu_items[i]);
         attroff(A_REVERSE);
     }
     refresh();
@@ -101,27 +101,92 @@ void show_pause_menu() {
                 menu_choice = 0;
             }
         } else if (key == '\n') {
-            // Executa a opção escolhida
-            if (menu_choice == 0) {
-                return;
-            } else if (menu_choice == 1) {
-                //restart_game();
-                return;
-            } else if (menu_choice == 2) {
+            if (menu_choice == 2) {
                 endwin();
                 exit(0);
             }
+            mvprintw(ROWS/2-2, COLS/2-5, "        ");
+            for (int i = 0; i < num_items; i++) {
+                mvprintw(ROWS/2+i, COLS/2-5, "                      ");
+            }
+            return menu_choice;
         }
         // Atualiza o menu com a opção selecionada
         clear();
-        mvprintw(y/2-2, x/2-5, "Pause");
+        mvprintw(ROWS/2-2, COLS/2-5, "Pause");
         for (int i = 0; i < num_items; i++) {
             if (i == menu_choice) {
                 attron(A_REVERSE);
             }
-            mvprintw(y/2+i, x/2-5, "%s", menu_items[i]);
+            mvprintw(ROWS/2+i, COLS/2-5, "%s", menu_items[i]);
             attroff(A_REVERSE);
         }
         refresh();
     }
+}
+
+void game_over() {
+	clear();
+    // Configura a janela
+    int height = 3; // altura da janela
+    int width = 15; // largura da janela
+    int starty = (ROWS - height) / 2; // posição y da janela
+    int startx = (COLS - width) / 2; // posição x da janela
+    WINDOW *win = newwin(height, width, starty, startx); // cria a janela
+    box(win, 0, 0); // adiciona uma borda à janela
+    refresh();
+    wrefresh(win);
+
+    // Configura as cores
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(3, COLOR_BLUE, COLOR_BLACK);
+    wbkgd(win, COLOR_PAIR(1));
+
+    // Imprime a mensagem na janela
+    wattron(win, COLOR_PAIR(3));
+    mvwprintw(win, 1, 3, "GAME OVER");
+    wattroff(win, COLOR_PAIR(3));
+
+    // Espera 3 segundos antes de fechar a janela
+    wrefresh(win);
+    sleep(3);
+
+    // Libera a janela
+    delwin(win);
+    endwin();
+}
+
+void you_won() {
+	clear();
+    // Configura a janela
+    int height = 3; // altura da janela
+    int width = 10; // largura da janela
+    int starty = (ROWS - height) / 2; // posição y da janela
+    int startx = (COLS - width) / 2; // posição x da janela
+    WINDOW *win = newwin(height, width, starty, startx); // cria a janela
+    box(win, 0, 0); // adiciona uma borda à janela
+    refresh();
+    wrefresh(win);
+
+    // Configura as cores
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(3, COLOR_BLUE, COLOR_BLACK);
+    wbkgd(win, COLOR_PAIR(1));
+
+    // Imprime a mensagem na janela
+    wattron(win, COLOR_PAIR(3));
+    mvwprintw(win, 1, 3, "WIN!");
+    wattroff(win, COLOR_PAIR(3));
+
+    // Espera 3 segundos antes de fechar a janela
+    wrefresh(win);
+    sleep(3);
+
+    // Libera a janela
+    delwin(win);
+    endwin();
 }

@@ -8,11 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-void generate_map(char map[ROWS][COLS]);
-void improve_map(char map [ROWS][COLS]);
-void remove_isolated_walls(char map[ROWS][COLS]);
 void init_map(char map[ROWS][COLS]);
 bool dentro_mapa(int y, int x);
 void draw_map(char map[ROWS][COLS]);
+void desenha_pontos(char map[ROWS][COLS]);
 
 #endif

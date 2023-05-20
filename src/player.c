@@ -4,8 +4,9 @@
 void inicializa_player(PLAYER *player){
     player->x = 15;
     player->y = 15;
-    player->hp = 100;
+    player->hp = 50;
     player->attack = 10;
+	player->only_dots = false;
 }
 
 void do_movement_action(PLAYER *player, char map[ROWS][COLS], int dx, int dy) {
@@ -28,7 +29,7 @@ bool valid_move(PLAYER *player, char map[ROWS][COLS], char key){
     }
 	return true;
 }
-
+/*
 void light_up(int y, int x, char map[ROWS][COLS]) {
 	attron(COLOR_PAIR(COLOR_YELLOW));
 	if(dentro_mapa(y-3,x) && map[y-3][x] == ' ') map[y-3][x] =  '.';
@@ -83,23 +84,20 @@ void light_left(int y, int x, char map[ROWS][COLS]) {
 	if(dentro_mapa(y+1,x+2) && map[y+1][x+2] == ' ') map[y+1][x+2] =  '.';
 	if(dentro_mapa(y,x+1) && map[y][x+1] == ' ') map[y][x+1] =  '.';
 	attroff(COLOR_PAIR(COLOR_YELLOW));
-}
+}*/
 
-void draw_light(PLAYER *player, char map[ROWS][COLS], char key){
-    int y = player->y, x = player->x;
+void draw_light(PLAYER *player, char map[ROWS][COLS]){
+    int centerX = player->x;
+    int centerY = player->y;
+    int xOffset = 3;
+    int yOffset = 2;
 
-    if (!valid_move(player, map, key))
-        return;
-
-    switch(key) {
-        case 'w': light_up(y, x, map);
-            break;
-        case 's': light_down(y, x, map);
-            break;
-        case 'a': light_right(y, x, map);
-            break;
-        case 'd': light_left(y, x, map);
-            break;            
+    for (int i = centerX - xOffset; i <= centerX + xOffset; i++) {
+        for (int j = centerY - yOffset; j <= centerY + yOffset; j++) {
+            if (dentro_mapa(j,i) && map[j][i] == ' ') {
+                map[j][i] = '.';
+            }
+        }
     }
 
     attron(COLOR_PAIR(COLOR_YELLOW));

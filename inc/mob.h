@@ -19,11 +19,10 @@ typedef struct{
 
 void spawn_mobs(char map[ROWS][COLS], MOB *mobs[]);
 void move_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]);
-double distancia(PLAYER *player, MOB *mob);
-MOB *get_mob(PLAYER *player, MOB *mobs[]);
-void playSound(const char* filename);
-void game_over();
-void you_won();
-void kill(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]);
+MOB *get_closest_mob(MOB *mobs[], PLAYER *player);
+void player_attack(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]);
+void mob_attack(PLAYER *player, MOB *mobs[]);
+void draw_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]);
+bool is_mob_visible(MOB *mob, PLAYER *player, char map[ROWS][COLS]);
 
 #endif
