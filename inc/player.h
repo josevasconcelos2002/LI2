@@ -1,7 +1,5 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-#define ROWS 30
-#define COLS 100
 
 #include "map.h"
 

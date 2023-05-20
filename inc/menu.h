@@ -1,8 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
-#define ROWS 30
-#define COLS 100
 
+#include "map.h"
 #include <stdlib.h>
 #include <stdio.h>
 

@@ -1,22 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <float.h>
-#include <unistd.h>
 #include <ncurses.h>
-#include <time.h>
-#include <stdbool.h>
-#include <string.h>
-#include <math.h>
-#include <alsa/asoundlib.h>
 #include "map.h"
 #include "menu.h"
 #include "player.h"
 #include "mob.h"
-
-#define WALL_PROB 0.465
-#define ITERATIONS 10
-#define ROWS 30
-#define COLS 100
 
 bool only_dots = false;
 

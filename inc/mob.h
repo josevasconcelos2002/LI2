@@ -1,7 +1,5 @@
 #ifndef MOB_H
 #define MOB_H
-#define ROWS 30
-#define COLS 100
 
 #include "player.h"
 #include "map.h"
