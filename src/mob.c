@@ -1,7 +1,7 @@
 #include <ncurses.h>
 #include "mob.h"
 
-void spawn_mobs(char map[ROWS][COLS], MOB *mobs[]) {    
+void init_mobs(char map[ROWS][COLS], MOB *mobs[]) {    
     // Gera 10 monstros com posições aleatórias no mapa
     for (int i = 0; i < 10; i++) {
         int x, y;

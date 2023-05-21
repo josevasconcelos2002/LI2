@@ -125,7 +125,7 @@ bool dentro_mapa(int y, int x){
 void draw_map(char map[ROWS][COLS]) {
 	for (int i = 0; i < ROWS; i++) {
 		for (int j = 0; j < COLS; j++) {
-            if(map[i][j] != '#' && map[i][j] != '@' && map[i][j] != '!'){
+            if(map[i][j] == ' '){
                 start_color();
                 init_pair(1, COLOR_BLACK, COLOR_BLACK);
                 attron(COLOR_PAIR(1));
@@ -138,6 +138,13 @@ void draw_map(char map[ROWS][COLS]) {
                 attron(COLOR_PAIR(5));
                 mvaddch(i, j, map[i][j]);
                 attroff(COLOR_PAIR(5));
+            }
+            else if(map[i][j] == '+'){
+                start_color();
+                init_pair(10,COLOR_RED,COLOR_BLACK);
+                attron(COLOR_PAIR(10));
+                mvaddch(i, j, map[i][j]);
+                attroff(COLOR_PAIR(10));
             }
 		}
 	}

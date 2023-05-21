@@ -155,7 +155,6 @@ void game_over() {
 
     // Libera a janela
     delwin(win);
-    endwin();
 }
 
 void you_won() {
@@ -188,5 +187,4 @@ void you_won() {
 
     // Libera a janela
     delwin(win);
-    endwin();
 }

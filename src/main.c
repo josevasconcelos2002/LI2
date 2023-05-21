@@ -3,8 +3,9 @@
 #include "menu.h"
 #include "player.h"
 #include "mob.h"
+#include "state.h"
 
-int update(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
+void update(STATE *state, PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
 	char key = getch();
 	mvaddch(player->y,player->x, ' ');
 	remove_light(map);
@@ -31,9 +32,11 @@ int update(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
 			}else draw_map(map);
             break; //altera o modo de visao
 		case ' ':
-			clear();
-            if(show_pause_menu() == 1) return 3;
-			draw_map(map); 
+			if (show_pause_menu() == 1) {
+				state->gameState = MENU;
+				return;
+			}
+			draw_map(map);
             break; // espaco
 		case 'q':
             endwin();
@@ -52,7 +55,6 @@ int update(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
 	draw_light(player, map);
     draw_mobs(player, mobs, map);
 	refresh();
-	return 0;
 }
 
 bool is_win(MOB *mobs[]) {
@@ -64,28 +66,21 @@ bool is_win(MOB *mobs[]) {
 	return true;
 }
 
-int play_game(PLAYER *player, MOB *mobs[], char map[ROWS][COLS], int nrows) {
-    inicializa_player(player);
-	init_map(map);
-    spawn_mobs(map, mobs);
-    
-    do {
-		player->y = rand() % (COLS - 2) + 1;
-		player->x = rand() % (COLS - 2) + 1;
-	} while(map[player->y][player->x] == '#' || !dentro_mapa(player->y, player->x));
-
+void play_game(STATE *state, PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
+	init_map(map);    
+	init_player(player, map);
+    init_mobs(map, mobs);
+	spawn_potions(map);
 	WINDOW* window = newwin(ROWS, COLS, 1, 1);
 	box(window, '#', '#');
 	refresh();
-    clear();
+	clear();
     draw_map(map);
     draw_mobs(player, mobs, map);
     draw_player(player,map);
     draw_light(player, map);
-	draw_pocao(map);
 
-	while(1) {
-		move(nrows - 1, 0);
+	while(state->gameState == RUNNING) {
         start_color();
         init_pair(2,COLOR_BLUE, COLOR_BLACK);
 		attron(COLOR_PAIR(2));
@@ -112,12 +107,10 @@ int play_game(PLAYER *player, MOB *mobs[], char map[ROWS][COLS], int nrows) {
 		refresh();
 		move(player->y, player->x);
 		mob_attack(player, mobs);
-		if(update(player, mobs, map) == 3) return 3;
-		if(player->hp <= 0) return 1;
-		if(is_win(mobs)) return 2;
-		noecho();
+		update(state, player, mobs, map);
+		if(player->hp <= 0) state->gameState = LOST;
+		if(is_win(mobs)) state->gameState = WON;
 	}
-	return 0;
 }
 
 int main(){
@@ -127,10 +120,9 @@ int main(){
 	nonl();
 	intrflush(stdscr, false);
 	keypad(stdscr, true);
-	WINDOW *wnd = initscr();
-	int nrows;
-	nrows = getmaxx(wnd);
-
+	initscr();
+	STATE *state = malloc(sizeof(STATE));
+	init_state(state);
     PLAYER *player = malloc(sizeof(PLAYER));
 	char map[ROWS][COLS];
 	MOB *mobs[10];
@@ -138,23 +130,20 @@ int main(){
     	mobs[i] = malloc(sizeof(MOB));
 	}
 
-	int play;
 	bool quit = false;
 	do {
 		if(show_main_menu() == 0) {
-			clear();
-			do {
-				play = play_game(player, mobs, map, nrows);
-			}while(play == 0);
-
-			if(play == 1) {
-				game_over();
-				play = 3;
-			}else if(play == 2) {
-				you_won();
-				play = 3;
+			state->gameState = RUNNING;
+			while(state->gameState == RUNNING) {
+				play_game(state, player, mobs, map);
 			}
-			endwin();
+			if(state->gameState == LOST) {
+				game_over();
+				state->gameState = MENU;
+			}else if(state->gameState == WON) {
+				you_won();
+				state->gameState = MENU;
+			}
 		}else quit = true;
 	}while(!quit);
 
@@ -162,6 +151,7 @@ int main(){
     for (int i = 0; i < 10; i++) {
         free(mobs[i]);
     }
+	free(state);
 	endwin();
 	return 0;
 }

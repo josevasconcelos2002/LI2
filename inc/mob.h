@@ -17,7 +17,7 @@ typedef struct{
     bool is_dead;
 } MOB;
 
-void spawn_mobs(char map[ROWS][COLS], MOB *mobs[]);
+void init_mobs(char map[ROWS][COLS], MOB *mobs[]);
 void move_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]);
 MOB *get_closest_mob(MOB *mobs[], PLAYER *player);
 void player_attack(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]);
