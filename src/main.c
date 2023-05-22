@@ -71,6 +71,7 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) 
 	init_player(player, map);
     init_mobs(map, mobs);
 	spawn_potions(map);
+	spawn_sword(map);
 	WINDOW* window = newwin(ROWS, COLS, 1, 1);
 	box(window, '#', '#');
 	refresh();

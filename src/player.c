@@ -19,6 +19,10 @@ void do_movement_action(PLAYER *player, char map[ROWS][COLS], int dx, int dy) {
 		player->hp += 20;
 		map[player->y][player->x] = '@';
 	}
+	if(map[player->y][player->x] == '|'){
+		player->attack += 5;
+		map[player->y][player->x] = '@';
+	}
 }
 
 bool valid_move(PLAYER *player, char map[ROWS][COLS], char key){
@@ -46,6 +50,16 @@ void spawn_potions(char map[ROWS][COLS]){
 		} while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+');
 		map[y][x] = '+';
 	}
+}
+
+void spawn_sword(char map[ROWS][COLS]){
+	int x, y;
+	do {
+		// Gera uma posição aleatória
+		x = rand() % COLS;
+		y = rand() % ROWS;
+	} while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+');
+	map[y][x] = '|';
 }
 
 
