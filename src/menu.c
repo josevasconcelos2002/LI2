@@ -35,11 +35,13 @@ int show_main_menu() {
         c = getch(); // Lê a entrada do jogador
         switch(c) {
             case 'w':
+            case 65:
                 if (choice > 0) {
                     choice--;
                 }
                 break;
             case 's':
+            case 66:
                 if (choice < 1) {
                     choice++;
                 }
@@ -78,7 +80,7 @@ int show_pause_menu() {
 
     // Desenha o menu na tela
     mvprintw(ROWS/2-2, COLS/2-5, "Pause");
-    for (int i = 0; i < num_items; i++) {
+    for (int i = 0; i < num_items ; i++) {
         if (i == menu_choice) {
             attron(A_REVERSE);
         }
@@ -90,12 +92,12 @@ int show_pause_menu() {
     // Processa as teclas pressionadas pelo jogador
     while (true) {
         int key = getch();
-        if (key == 'w') {
+        if (key == 'w' || key == 65) {
             menu_choice--;
             if (menu_choice < 0) {
                 menu_choice = num_items-1;
             }
-        } else if (key == 's') {
+        } else if (key == 's' || key == 66) {
             menu_choice++;
             if (menu_choice >= num_items) {
                 menu_choice = 0;
@@ -156,6 +158,39 @@ void game_over() {
     // Libera a janela
     delwin(win);
 }
+
+void boss_warning() {
+	clear();
+    // Configura a janela
+    int height = 3; // altura da janela
+    int width = 10; // largura da janela
+    int starty = (ROWS - height) / 2; // posição y da janela
+    int startx = (COLS - width) / 2; // posição x da janela
+    WINDOW *win = newwin(height, width, starty, startx); // cria a janela
+    box(win, 0, 0); // adiciona uma borda à janela
+    refresh();
+    wrefresh(win);
+
+    // Configura as cores
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(3, COLOR_RED, COLOR_BLACK);
+    wbkgd(win, COLOR_PAIR(1));
+
+    // Imprime a mensagem na janela
+    wattron(win, COLOR_PAIR(3));
+    mvwprintw(win, 1, 3, "BOSS!");
+    wattroff(win, COLOR_PAIR(3));
+
+    // Espera 3 segundos antes de fechar a janela
+    wrefresh(win);
+    sleep(3);
+
+    // Libera a janela
+    delwin(win);
+}
+
 
 void you_won() {
 	clear();

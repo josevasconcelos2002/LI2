@@ -23,6 +23,91 @@ void init_mobs(char map[ROWS][COLS], MOB *mobs[]) {
     }
 }
 
+void init_boss(char map[ROWS][COLS], MOB *boss) {    
+        int x, y;
+        do {
+            // Gera uma posição aleatória
+            x = rand() % COLS;
+            y = rand() % ROWS;
+        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|');
+        
+        // Inicializa o monstro com a posição gerada e atributos aleatórios
+        boss->x = x;
+        boss->y = y;
+        boss->hp = 150;
+        boss->attack = 15;
+		boss->is_visible = true; //visivel ou nao?
+        boss->is_dead = false;
+
+		map[y][x] = 'B';
+}
+
+void move_boss(PLAYER *player, MOB *boss, char map[ROWS][COLS]) {
+        if (!boss->is_dead) {
+            int playerX = player->x;
+            int playerY = player->y;
+            int closestX = boss->x;
+            int closestY = boss->y;
+            int minDistance = 20;
+
+            if (abs(playerX - closestX) + abs(playerY - closestY) > minDistance) {
+                int x, y;
+                do {
+                    int direction = rand() % 4;
+                    x = boss->x;
+                    y = boss->y;
+
+                    // Move horizontally or vertically
+                    if (direction == 0) {
+                        x--;
+                    } else if (direction == 1) {
+                        x++;
+                    } else if (direction == 2) {
+                        y--;
+                    } else if (direction == 3) {
+                        y++;
+                    }
+                } while (map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|');
+
+                closestX = x;
+                closestY = y;
+            } else {
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        // Skip diagonal directions
+                        if (dx != 0 && dy != 0) {
+                            continue;
+                        }
+
+                        int newX = boss->x + dx;
+                        int newY = boss->y + dy;
+                        int distance = abs(playerX - newX) + abs(playerY - newY);
+
+                        if (dentro_mapa(newY, newX) && map[newY][newX] != '#'
+                            && map[newY][newX] != '@'  && map[newY][newX] != '!' && distance < minDistance
+                            && map[newY][newX] != '+' && map[newY][newX] != '|') {
+                            closestX = newX;
+                            closestY = newY;
+                            minDistance = distance;
+                        }
+                    }
+                }
+            }
+
+            int prevX = boss->x;
+            int prevY = boss->y;
+            boss->x = closestX;
+            boss->y = closestY;
+
+            mvaddch(prevY, prevX, ' ');
+            map[prevY][prevX] = ' ';
+            
+            map[closestY][closestX] = '!';
+        }
+}
+
+
+
 void move_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
     for (int i = 0; i < 10; i++) {
         if (mobs[i]->is_dead == false) {
@@ -181,9 +266,30 @@ void player_attack(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]){
 	}
 }
 
+void player_attack_boss(PLAYER *player, MOB *boss, char map[ROWS][COLS]){
+	if(boss != NULL){
+        //playSound("player_attack.wav");
+		boss->hp -= player->attack;
+
+		if(boss->hp <= 0){
+            map[boss->y][boss->x] = ' ';
+            mvaddch(boss->y, boss->x, ' ');
+			boss->is_dead = true;
+            boss->is_visible = false;
+		}
+	}
+}
+
+void boss_attack(PLAYER *player, MOB *boss){
+	if(boss && distancia(player, boss) < 1.5){
+        //playSound("monster_attack.wav");
+		player->hp -= boss->attack;
+	}
+}
+
 void mob_attack(PLAYER *player, MOB *mobs[]){
 	MOB *mob = get_closest_mob(mobs, player);
-	if(mob != NULL && distancia(player, mob) < 1.5){
+	if(mob && distancia(player, mob) < 1.5){
         //playSound("monster_attack.wav");
 		player->hp -= mob->attack;
 	}
@@ -204,6 +310,25 @@ bool is_mob_visible(MOB *mob, PLAYER *player, char map[ROWS][COLS]) {
     }
     return false;
 }
+
+
+void draw_boss(PLAYER *player, MOB *boss, char map[ROWS][COLS]) {
+        if(player->only_dots && is_mob_visible(boss, player, map) && !boss->is_dead) {
+            start_color();
+            init_pair(1, COLOR_RED, COLOR_BLACK);
+            attron(COLOR_PAIR(1));
+            mvaddch(boss->y , boss->x, '!');
+            attroff(COLOR_PAIR(1));
+        }
+        else if(!boss->is_dead && !player->only_dots && is_mob_visible(boss, player, map)){
+            start_color();
+            init_pair(1, COLOR_RED, COLOR_BLACK);
+            attron(COLOR_PAIR(1));
+            mvaddch(boss->y , boss->x, '!');
+            attroff(COLOR_PAIR(1));
+        }
+}
+
 
 void draw_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
     for(int i = 0; i < 10; i++) {

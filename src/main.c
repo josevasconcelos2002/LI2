@@ -10,16 +10,20 @@ void update(STATE *state, PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
 	mvaddch(player->y,player->x, ' ');
 	remove_light(map);
 	switch(key) {
-		case 'w': 
+		case 'w':
+		case 65: 
             if(valid_move(player, map, key)) do_movement_action(player, map, 0, -1);
             break;
 		case 's':
+		case 66:
             if(valid_move(player, map, key)) do_movement_action(player, map, 0, 1);
             break;
 		case 'a':
+		case 68:
             if(valid_move(player, map, key)) do_movement_action(player, map, -1, 0);
             break;
 		case 'd':
+		case 67:
             if(valid_move(player, map, key)) do_movement_action(player, map, 1, 0);
             break;
 		case 'k':
@@ -37,7 +41,7 @@ void update(STATE *state, PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
 				return;
 			}
 			draw_map(map);
-            break; // espaco
+            break;
 		case 'q':
             endwin();
             exit(0);
@@ -57,19 +61,101 @@ void update(STATE *state, PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
 	refresh();
 }
 
-bool is_win(MOB *mobs[]) {
-	for(int i = 0; i < 10; i++) {
-		if(!mobs[i]->is_dead) {
-			return false;
-		}
+void update_boss(STATE *state, PLAYER *player, MOB *boss, char map[ROWS][COLS]) {
+	char key = getch();
+	mvaddch(player->y,player->x, ' ');
+	remove_light(map);
+	switch(key) {
+		case 'w': 
+		case 65:
+            if(valid_move(player, map, key)) do_movement_action(player, map, 0, -1);
+            break;
+		case 's':
+		case 66:
+            if(valid_move(player, map, key)) do_movement_action(player, map, 0, 1);
+            break;
+		case 'a':
+		case 68:
+            if(valid_move(player, map, key)) do_movement_action(player, map, -1, 0);
+            break;
+		case 'd':
+		case 67:
+            if(valid_move(player, map, key)) do_movement_action(player, map, 1, 0);
+            break;
+		case 'k':
+            player_attack_boss(player,boss,map);
+            break;
+		case 'v':
+            player->only_dots = !player->only_dots;
+            if(player->only_dots) {
+				desenha_pontos(map);
+			}else draw_map(map);
+            break; //altera o modo de visao
+		case ' ':
+			if (show_pause_menu() == 1) {
+				state->gameState = MENU;
+				return;
+			}
+			draw_map(map);
+            break;
+		case 'q':
+            endwin();
+            exit(0);
+            break;
+		default:
+			break;
 	}
-	return true;
+	draw_player(player, map);
+	move_boss(player,boss,map);
+	if(is_mob_visible(boss, player, map) && !boss->is_dead) {
+		boss->is_visible = true;
+	}
+	draw_light(player, map);
+    draw_boss(player,boss,map);
+	refresh();
 }
 
-void play_game(STATE *state, PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
+
+bool time_for_boss(MOB *mobs[]){
+	bool resultado = true;
+	for(int i = 0; i<10 ; i++){
+		if(!mobs[i]->is_dead){
+			resultado = false;
+			break;
+		}
+	}
+	return resultado;
+}
+
+bool time_for_mobs(MOB *mobs[]){
+	bool resultado = false;
+	for(int i = 0; i<10 ; i++){
+		if(!mobs[i]->is_dead){
+			resultado = true;
+			break;
+		}
+	}
+	return resultado;
+}
+
+
+bool is_win(MOB *mobs[], MOB *boss) {
+	bool resultado = true;
+	for(int i = 0; i < 10; i++) {
+		if(!mobs[i]->is_dead) {
+			resultado = false;
+			break;
+		}
+	}
+	if(resultado && !boss->is_dead) resultado = false;
+	return resultado;
+}
+
+void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[ROWS][COLS]) {
 	init_map(map);    
 	init_player(player, map);
     init_mobs(map, mobs);
+	init_boss(map,boss);
 	spawn_potions(map);
 	spawn_sword(map);
 	WINDOW* window = newwin(ROWS, COLS, 1, 1);
@@ -82,35 +168,76 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) 
     draw_light(player, map);
 
 	while(state->gameState == RUNNING) {
-        start_color();
-        init_pair(2,COLOR_BLUE, COLOR_BLACK);
-		attron(COLOR_PAIR(2));
-		mvprintw(ROWS - 30, COLS + 4, "                                                ");
-    	mvprintw(ROWS - 27, COLS + 3, "                                                ");
-    	mvprintw(ROWS - 25, COLS + 3, "                                                ");
-		if(player != NULL){
-			mvprintw(ROWS-30, COLS +4,"Player state:");
-			mvprintw(ROWS-27,COLS+3,"	Health: %d", player->hp);
-			mvprintw(ROWS-25,COLS+3,"	Atack: %d", player->attack);
+        if(time_for_mobs(mobs)){
+			start_color();
+			init_pair(2,COLOR_BLUE, COLOR_BLACK);
+			attron(COLOR_PAIR(2));
+			mvprintw(ROWS - 30, COLS + 4, "                                                ");
+			mvprintw(ROWS - 27, COLS + 3, "                                                ");
+			mvprintw(ROWS - 25, COLS + 3, "                                                ");
+			if(player != NULL){
+				mvprintw(ROWS-30, COLS +4,"Player state:");
+				mvprintw(ROWS-27,COLS+3,"	Health: %d", player->hp);
+				mvprintw(ROWS-25,COLS+3,"	Atack: %d", player->attack);
+			}
+			MOB *mob = get_closest_mob(mobs, player);
+			if(mob != NULL){
+				mvprintw(ROWS-30, COLS +22,"Monster state:");
+				mvprintw(ROWS-27,COLS+21,"	Health: %d",mob->hp);
+				mvprintw(ROWS-25,COLS+21,"	Atack: %d",mob->attack);
+			}
+			else{
+				mvprintw(ROWS-30, COLS +22,"Monster state:");
+				mvprintw(ROWS-27,COLS+21,"	Health: ");
+				mvprintw(ROWS-25,COLS+21,"	Atack: ");
+			}
+			attroff(COLOR_PAIR(2));
+			refresh();
+			move(player->y, player->x);
+			mob_attack(player, mobs);
+			update(state, player, mobs, map);
 		}
-		MOB *mob = get_closest_mob(mobs, player);
-		if(mob != NULL){
-			mvprintw(ROWS-30, COLS +22,"Monster state:");
-			mvprintw(ROWS-27,COLS+21,"	Health: %d",mob->hp);
-			mvprintw(ROWS-25,COLS+21,"	Atack: %d",mob->attack);
-		}
-		else{
-			mvprintw(ROWS-30, COLS +22,"Monster state:");
-			mvprintw(ROWS-27,COLS+21,"	Health: ");
-			mvprintw(ROWS-25,COLS+21,"	Atack: ");
-		}
-		attroff(COLOR_PAIR(2));
-		refresh();
-		move(player->y, player->x);
-		mob_attack(player, mobs);
-		update(state, player, mobs, map);
 		if(player->hp <= 0) state->gameState = LOST;
-		if(is_win(mobs)) state->gameState = WON;
+		if(time_for_boss(mobs)){
+			/*
+			boss_warning();
+			WINDOW* window = newwin(ROWS, COLS, 1, 1);
+			box(window, '#', '#');
+			refresh();
+			clear();
+			draw_map(map);
+			draw_player(player,map);
+			draw_light(player, map);
+			*/
+			draw_boss(player,boss,map);
+			start_color();
+			init_pair(2,COLOR_BLUE, COLOR_BLACK);
+			attron(COLOR_PAIR(2));
+			mvprintw(ROWS - 30, COLS + 4, "                                                ");
+			mvprintw(ROWS - 27, COLS + 3, "                                                ");
+			mvprintw(ROWS - 25, COLS + 3, "                                                ");
+			if(player != NULL){
+				mvprintw(ROWS-30, COLS +4,"Player state:");
+				mvprintw(ROWS-27,COLS+3,"	Health: %d", player->hp);
+				mvprintw(ROWS-25,COLS+3,"	Atack: %d", player->attack);
+			}
+			if(boss != NULL){
+				mvprintw(ROWS-30, COLS +22,"BOSS state:");
+				mvprintw(ROWS-27,COLS+21,"	Health: %d",boss->hp);
+				mvprintw(ROWS-25,COLS+21,"	Atack: %d",boss->attack);
+			}
+			else{
+				mvprintw(ROWS-30, COLS +22,"BOSS state:");
+				mvprintw(ROWS-27,COLS+21,"	Health: ");
+				mvprintw(ROWS-25,COLS+21,"	Atack: ");
+			}
+			attroff(COLOR_PAIR(2));
+			refresh();
+			move(player->y, player->x);
+			boss_attack(player,boss);
+			update_boss(state,player,boss,map);
+		}
+		if(is_win(mobs,boss)) state->gameState = WON;
 	}
 }
 
@@ -130,13 +257,14 @@ int main(){
     for (int i = 0; i < 10; i++) {
     	mobs[i] = malloc(sizeof(MOB));
 	}
+	MOB *boss = malloc(sizeof(MOB));
 
 	bool quit = false;
 	do {
 		if(show_main_menu() == 0) {
 			state->gameState = RUNNING;
 			while(state->gameState == RUNNING) {
-				play_game(state, player, mobs, map);
+				play_game(state, player, mobs, boss, map);
 			}
 			if(state->gameState == LOST) {
 				game_over();
@@ -152,6 +280,7 @@ int main(){
     for (int i = 0; i < 10; i++) {
         free(mobs[i]);
     }
+	free(boss);
 	free(state);
 	endwin();
 	return 0;

@@ -10,5 +10,6 @@ int show_main_menu();
 int show_pause_menu();
 void game_over();
 void you_won();
+void boss_warning();
 
 #endif

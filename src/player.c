@@ -28,13 +28,21 @@ void do_movement_action(PLAYER *player, char map[ROWS][COLS], int dx, int dy) {
 bool valid_move(PLAYER *player, char map[ROWS][COLS], char key){
     int x = player->x, y = player->y;
     switch(key) {
-        case 'w': if(map[y-1][x] == '#' || map[y-1][x] == '!') return false;
+        case 'w':
+		case 65: 
+			if(map[y-1][x] == '#' || map[y-1][x] == '!') return false;
             break;
-        case 's': if(map[y+1][x] == '#' || map[y+1][x] == '!') return false;
+        case 's': 
+		case 66:
+			if(map[y+1][x] == '#' || map[y+1][x] == '!') return false;
             break;
-        case 'a': if(map[y][x-1] == '#' || map[y][x-1] == '!') return false;
+        case 'a':
+		case 68:
+			if(map[y][x-1] == '#' || map[y][x-1] == '!') return false;
             break;
-        case 'd': if(map[y][x+1] == '#' || map[y][x+1] == '!') return false;
+        case 'd':
+		case 67:
+			if(map[y][x+1] == '#' || map[y][x+1] == '!') return false;
             break;            
     }
 	return true;
