@@ -247,7 +247,7 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[RO
 		}
 		if(is_win(mobs,boss)) state->gameState = WON;
 	}
-	free();
+	free(newPlayer);
 }
 
 int main(){
