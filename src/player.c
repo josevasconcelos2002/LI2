@@ -9,6 +9,7 @@ void init_player(PLAYER *player, char map[ROWS][COLS]){
     player->hp = 100;
     player->attack = 10;
 	player->only_dots = false;
+	player->vision_expanded = false;
 }
 
 void do_movement_action(PLAYER *player, char map[ROWS][COLS], int dx, int dy) {
@@ -23,6 +24,10 @@ void do_movement_action(PLAYER *player, char map[ROWS][COLS], int dx, int dy) {
 		player->attack += 5;
 		map[player->y][player->x] = '@';
 	}
+	if(map[player->y][player->x] == 'O'){
+		player->vision_expanded = true;
+		map[player->y][player->x] = '@';
+	}	
 }
 
 bool valid_move(PLAYER *player, char map[ROWS][COLS], char key){
@@ -70,13 +75,31 @@ void spawn_sword(char map[ROWS][COLS]){
 	map[y][x] = '|';
 }
 
+void spawn_vision(char map[ROWS][COLS]){
+	int x, y;
+	do {
+		// Gera uma posição aleatória
+		x = rand() % COLS;
+		y = rand() % ROWS;
+	} while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|');
+	map[y][x] = 'O';
+}
 
 void draw_light(PLAYER *player, char map[ROWS][COLS]){
     int centerX = player->x;
     int centerY = player->y;
-    int xOffset = 3;
-    int yOffset = 2;
-
+	int xOffset = 0;
+    int yOffset = 0;
+    
+	if (player->vision_expanded) {
+		xOffset = 6;
+    	yOffset = 4;
+	}
+	else {
+		xOffset = 3;
+    	yOffset = 2;
+	}
+	
     for (int i = centerX - xOffset; i <= centerX + xOffset; i++) {
         for (int j = centerY - yOffset; j <= centerY + yOffset; j++) {
             if (dentro_mapa(j,i) && map[j][i] == ' ') {

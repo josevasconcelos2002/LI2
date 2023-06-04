@@ -153,6 +153,13 @@ void draw_map(char map[ROWS][COLS]) {
                 mvaddch(i, j, map[i][j]);
                 attroff(COLOR_PAIR(10));
             }
+            else if(map[i][j] == 'O'){
+                start_color();
+                init_pair(2,COLOR_CYAN,COLOR_BLACK);
+                attron(COLOR_PAIR(2));
+                mvaddch(i, j, map[i][j]);
+                attroff(COLOR_PAIR(2));
+            }
 		}
 	}
 }

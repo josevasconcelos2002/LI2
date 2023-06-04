@@ -9,6 +9,7 @@ typedef struct{
 	int hp;
 	int attack;
 	bool only_dots;
+	bool vision_expanded;
 } PLAYER;
 
 void init_player(PLAYER *player, char map[ROWS][COLS]);
@@ -19,4 +20,5 @@ void remove_light(char map[ROWS][COLS]);
 void draw_player(PLAYER *player, char map[ROWS][COLS]);
 void spawn_potions(char map[ROWS][COLS]);
 void spawn_sword(char map[ROWS][COLS]);
+void spawn_vision(char map[ROWS][COLS]);
 #endif

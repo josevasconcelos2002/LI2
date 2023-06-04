@@ -159,10 +159,12 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[RO
 	init_player(newPlayer,bossMap);
 	spawn_potions(bossMap);
 	spawn_sword(bossMap);
+	spawn_vision(bossMap);
 	init_player(player, map);
     init_mobs(map, mobs);
 	spawn_potions(map);
 	spawn_sword(map);
+	spawn_vision(map);
 	WINDOW* window = newwin(ROWS, COLS, 1, 1);
 	box(window, '#', '#');
 	refresh();
@@ -183,18 +185,18 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[RO
 			if(player != NULL){
 				mvprintw(ROWS-30, COLS +4,"Player state:");
 				mvprintw(ROWS-27,COLS+3,"	Health: %d", player->hp);
-				mvprintw(ROWS-25,COLS+3,"	Atack: %d", player->attack);
+				mvprintw(ROWS-25,COLS+3,"	Attack: %d", player->attack);
 			}
 			MOB *mob = get_closest_mob(mobs, player);
 			if(mob != NULL){
 				mvprintw(ROWS-30, COLS +22,"Monster state:");
 				mvprintw(ROWS-27,COLS+21,"	Health: %d",mob->hp);
-				mvprintw(ROWS-25,COLS+21,"	Atack: %d",mob->attack);
+				mvprintw(ROWS-25,COLS+21,"	Attack: %d",mob->attack);
 			}
 			else{
 				mvprintw(ROWS-30, COLS +22,"Monster state:");
 				mvprintw(ROWS-27,COLS+21,"	Health: ");
-				mvprintw(ROWS-25,COLS+21,"	Atack: ");
+				mvprintw(ROWS-25,COLS+21,"	Attack: ");
 			}
 			attroff(COLOR_PAIR(2));
 			refresh();
@@ -227,17 +229,17 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[RO
 			if(player != NULL){
 				mvprintw(ROWS-30, COLS +4,"Player state:");
 				mvprintw(ROWS-27,COLS+3,"	Health: %d", newPlayer->hp);
-				mvprintw(ROWS-25,COLS+3,"	Atack: %d", newPlayer->attack);
+				mvprintw(ROWS-25,COLS+3,"	Attack: %d", newPlayer->attack);
 			}
 			if(boss != NULL){
 				mvprintw(ROWS-30, COLS +22,"BOSS state:");
 				mvprintw(ROWS-27,COLS+21,"	Health: %d",boss->hp);
-				mvprintw(ROWS-25,COLS+21,"	Atack: %d",boss->attack);
+				mvprintw(ROWS-25,COLS+21,"	Attack: %d",boss->attack);
 			}
 			else{
 				mvprintw(ROWS-30, COLS +22,"BOSS state:");
 				mvprintw(ROWS-27,COLS+21,"	Health: ");
-				mvprintw(ROWS-25,COLS+21,"	Atack: ");
+				mvprintw(ROWS-25,COLS+21,"	Attack: ");
 			}
 			attroff(COLOR_PAIR(2));
 			refresh();

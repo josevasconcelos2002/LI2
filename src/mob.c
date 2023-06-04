@@ -9,7 +9,7 @@ void init_mobs(char map[ROWS][COLS], MOB *mobs[]) {
             // Gera uma posição aleatória
             x = rand() % COLS;
             y = rand() % ROWS;
-        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|'); // Verifica se a posição é uma parede
+        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|' || map[y][x] == 'O'); // Verifica se a posição é uma parede
         
         // Inicializa o monstro com a posição gerada e atributos aleatórios
         mobs[i]->x = x;
@@ -29,7 +29,7 @@ void init_boss(char map[ROWS][COLS], MOB *boss) {
             // Gera uma posição aleatória
             x = rand() % COLS;
             y = rand() % ROWS;
-        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|');
+        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|' || map[y][x] == 'O');
         
         // Inicializa o monstro com a posição gerada e atributos aleatórios
         boss->x = x;
@@ -67,7 +67,7 @@ void move_boss(PLAYER *player, MOB *boss, char map[ROWS][COLS]) {
                     } else if (direction == 3) {
                         y++;
                     }
-                } while (map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|');
+                } while (map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|' || map[y][x] == 'O');
 
                 closestX = x;
                 closestY = y;
@@ -85,7 +85,7 @@ void move_boss(PLAYER *player, MOB *boss, char map[ROWS][COLS]) {
 
                         if (dentro_mapa(newY, newX) && map[newY][newX] != '#'
                             && map[newY][newX] != '@'  && map[newY][newX] != '!' && distance < minDistance
-                            && map[newY][newX] != '+' && map[newY][newX] != '|') {
+                            && map[newY][newX] != '+' && map[newY][newX] != '|' && map[newY][newX] != 'O') {
                             closestX = newX;
                             closestY = newY;
                             minDistance = distance;
@@ -105,8 +105,6 @@ void move_boss(PLAYER *player, MOB *boss, char map[ROWS][COLS]) {
             map[closestY][closestX] = '!';
         }
 }
-
-
 
 void move_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
     for (int i = 0; i < 10; i++) {
@@ -139,7 +137,7 @@ void move_mobs(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
                     } else if (direction == 3) {
                         y++;
                     }
-                } while (map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|');
+                } while (map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|' || map[y][x] == 'O');
 
                 closestX = x;
                 closestY = y;
@@ -298,8 +296,17 @@ void mob_attack(PLAYER *player, MOB *mobs[]){
 bool is_mob_visible(MOB *mob, PLAYER *player, char map[ROWS][COLS]) {
     int centerX = player->x;
     int centerY = player->y;
-    int xOffset = 3;
-    int yOffset = 2;
+    int xOffset = 0;
+    int yOffset = 0;
+    
+	if (player->vision_expanded) {
+		xOffset = 6;
+    	yOffset = 5;
+	}
+	else {
+		xOffset = 3;
+    	yOffset = 2;
+	}
 
     for (int i = centerX - xOffset; i <= centerX + xOffset; i++) {
         for (int j = centerY - yOffset; j <= centerY + yOffset; j++) {
