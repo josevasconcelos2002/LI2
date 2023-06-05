@@ -196,7 +196,7 @@ MOB *get_closest_mob(MOB *mobs[], PLAYER *player) {
         int dx = mob->x - player->x;
         int dy = mob->y - player->y;
 
-        int distanceSquared = dx * dx + dy * dy;get_
+        int distanceSquared = dx * dx + dy * dy;
         if (distanceSquared < closestDistanceSquared) {
             closestDistanceSquared = distanceSquared;
             closestMob = mob;
