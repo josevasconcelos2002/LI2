@@ -161,6 +161,7 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[RO
 	//spawn_sword(bossMap);
 	//spawn_vision(bossMap);
 	init_player(player, map);
+	init_boss(map,boss);
     init_mobs(map, mobs);
 	spawn_potions(map);
 	spawn_sword(map);

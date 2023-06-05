@@ -9,7 +9,7 @@ void init_mobs(char map[ROWS][COLS], MOB *mobs[]) {
             // Gera uma posição aleatória
             x = rand() % COLS;
             y = rand() % ROWS;
-        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|' || map[y][x] == 'O'); // Verifica se a posição é uma parede
+        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|' || map[y][x] == 'O' || map[y][x] == '!'); // Verifica se a posição é uma parede
         
         // Inicializa o monstro com a posição gerada e atributos aleatórios
         mobs[i]->x = x;
@@ -29,7 +29,7 @@ void init_boss(char map[ROWS][COLS], MOB *boss) {
             // Gera uma posição aleatória
             x = rand() % COLS;
             y = rand() % ROWS;
-        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|' || map[y][x] == 'O');
+        } while (!dentro_mapa(y,x) || map[y][x] == '#' || map[y][x] == '@' || map[y][x] == '+' || map[y][x] == '|' || map[y][x] == 'O' || map[y][x] == '!');
         
         // Inicializa o monstro com a posição gerada e atributos aleatórios
         boss->x = x;
@@ -39,7 +39,7 @@ void init_boss(char map[ROWS][COLS], MOB *boss) {
 		boss->is_visible = true; //visivel ou nao?
         boss->is_dead = false;
 
-		map[y][x] = 'B';
+		map[y][x] = '!';
 }
 
 void move_boss(PLAYER *player, MOB *boss, char map[ROWS][COLS]) {
