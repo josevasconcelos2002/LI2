@@ -185,7 +185,7 @@ double distancia(PLAYER *player, MOB *mob){
 
 MOB *get_closest_mob(MOB *mobs[], PLAYER *player) {
     MOB *closestMob = NULL;
-    int closestDistanceSquared = 20;
+    int closestDistanceSquared = 40;
 
     for (int i = 0; i < 10; i++) {
         MOB *mob = mobs[i];
@@ -196,7 +196,7 @@ MOB *get_closest_mob(MOB *mobs[], PLAYER *player) {
         int dx = mob->x - player->x;
         int dy = mob->y - player->y;
 
-        int distanceSquared = dx * dx + dy * dy;
+        int distanceSquared = dx * dx + dy * dy;get_
         if (distanceSquared < closestDistanceSquared) {
             closestDistanceSquared = distanceSquared;
             closestMob = mob;
@@ -301,7 +301,7 @@ bool is_mob_visible(MOB *mob, PLAYER *player, char map[ROWS][COLS]) {
     
 	if (player->vision_expanded) {
 		xOffset = 6;
-    	yOffset = 5;
+    	yOffset = 4;
 	}
 	else {
 		xOffset = 3;
