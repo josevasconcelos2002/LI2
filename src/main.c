@@ -153,13 +153,13 @@ bool is_win(MOB *mobs[], MOB *boss) {
 
 void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[ROWS][COLS]) {
 	init_map(map);  
-	char bossMap[ROWS][COLS];
-	init_map(bossMap);
-	PLAYER *newPlayer = malloc(sizeof(PLAYER));
-	init_player(newPlayer,bossMap);
-	spawn_potions(bossMap);
-	spawn_sword(bossMap);
-	spawn_vision(bossMap);
+	//char bossMap[ROWS][COLS];
+	//init_map(bossMap);
+	//PLAYER *newPlayer = malloc(sizeof(PLAYER));
+	//init_player(newPlayer,bossMap);
+	//spawn_potions(bossMap);
+	//spawn_sword(bossMap);
+	//spawn_vision(bossMap);
 	init_player(player, map);
     init_mobs(map, mobs);
 	spawn_potions(map);
@@ -207,7 +207,7 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[RO
 		if(player->hp <= 0) state->gameState = LOST;
 		if(time_for_boss(mobs)){
 			
-			boss_warning();
+			//boss_warning();
 			/*
 			WINDOW* window = newwin(ROWS, COLS, 1, 1);
 			box(window, '#', '#');
@@ -217,9 +217,9 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[RO
 			draw_player(player,map);
 			draw_light(player, map);
 			*/
-			draw_map(bossMap);
-			draw_boss(newPlayer,boss,bossMap);
-			draw_player(newPlayer,bossMap);
+			//draw_map(map);
+			draw_boss(player,boss,map);
+			//draw_player(player,map);
 			start_color();
 			init_pair(2,COLOR_BLUE, COLOR_BLACK);
 			attron(COLOR_PAIR(2));
@@ -228,8 +228,8 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[RO
 			mvprintw(ROWS - 25, COLS + 3, "                                                ");
 			if(player != NULL){
 				mvprintw(ROWS-30, COLS +4,"Player state:");
-				mvprintw(ROWS-27,COLS+3,"	Health: %d", newPlayer->hp);
-				mvprintw(ROWS-25,COLS+3,"	Attack: %d", newPlayer->attack);
+				mvprintw(ROWS-27,COLS+3,"	Health: %d", player->hp);
+				mvprintw(ROWS-25,COLS+3,"	Attack: %d", player->attack);
 			}
 			if(boss != NULL){
 				mvprintw(ROWS-30, COLS +22,"BOSS state:");
@@ -243,13 +243,13 @@ void play_game(STATE *state, PLAYER *player, MOB *mobs[], MOB *boss, char map[RO
 			}
 			attroff(COLOR_PAIR(2));
 			refresh();
-			move(newPlayer->y, newPlayer->x);
-			boss_attack(newPlayer,boss);
-			update_boss(state,newPlayer,boss,bossMap);
+			move(player->y, player->x);
+			boss_attack(player,boss);
+			update_boss(state,player,boss,map);
 		}
 		if(is_win(mobs,boss)) state->gameState = WON;
 	}
-	free(newPlayer);
+	//free(newPlayer);
 }
 
 int main(){
