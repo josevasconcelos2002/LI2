@@ -252,7 +252,7 @@ void playSound(const char* filename) {
 void player_attack(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]){
 	MOB *mob = get_closest_mob(mobs, player);
 	if(mob != NULL){
-        //playSound("player_attack.wav");
+        playSound("player_attack.wav");
 		mob->hp -= player->attack;
 
 		if(mob->hp <= 0){
@@ -266,7 +266,7 @@ void player_attack(PLAYER *player, MOB *mobs[], char map[ROWS][COLS]){
 
 void player_attack_boss(PLAYER *player, MOB *boss, char map[ROWS][COLS]){
 	if(boss != NULL){
-        //playSound("player_attack.wav");
+        playSound("player_attack.wav");
 		boss->hp -= player->attack;
 
 		if(boss->hp <= 0){
@@ -280,7 +280,7 @@ void player_attack_boss(PLAYER *player, MOB *boss, char map[ROWS][COLS]){
 
 void boss_attack(PLAYER *player, MOB *boss){
 	if(boss && distancia(player, boss) < 1.5){
-        //playSound("monster_attack.wav");
+        playSound("monster_attack.wav");
 		player->hp -= boss->attack;
 	}
 }
@@ -288,7 +288,7 @@ void boss_attack(PLAYER *player, MOB *boss){
 void mob_attack(PLAYER *player, MOB *mobs[]){
 	MOB *mob = get_closest_mob(mobs, player);
 	if(mob && distancia(player, mob) < 1.5){
-        //playSound("monster_attack.wav");
+        playSound("monster_attack.wav");
 		player->hp -= mob->attack;
 	}
 }

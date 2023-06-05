@@ -10,20 +10,20 @@ void update(STATE *state, PLAYER *player, MOB *mobs[], char map[ROWS][COLS]) {
 	mvaddch(player->y,player->x, ' ');
 	remove_light(map);
 	switch(key) {
+		case '5':
 		case 'w':
-		case 65: 
             if(valid_move(player, map, key)) do_movement_action(player, map, 0, -1);
             break;
+		case '2':
 		case 's':
-		case 66:
             if(valid_move(player, map, key)) do_movement_action(player, map, 0, 1);
             break;
+		case '1':
 		case 'a':
-		case 68:
             if(valid_move(player, map, key)) do_movement_action(player, map, -1, 0);
             break;
+		case '3':
 		case 'd':
-		case 67:
             if(valid_move(player, map, key)) do_movement_action(player, map, 1, 0);
             break;
 		case 'k':
@@ -66,20 +66,20 @@ void update_boss(STATE *state, PLAYER *player, MOB *boss, char map[ROWS][COLS]) 
 	mvaddch(player->y,player->x, ' ');
 	remove_light(map);
 	switch(key) {
+		case '5':
 		case 'w': 
-		case 65:
             if(valid_move(player, map, key)) do_movement_action(player, map, 0, -1);
             break;
+		case '2':
 		case 's':
-		case 66:
             if(valid_move(player, map, key)) do_movement_action(player, map, 0, 1);
             break;
+		case '1':
 		case 'a':
-		case 68:
             if(valid_move(player, map, key)) do_movement_action(player, map, -1, 0);
             break;
+		case '3':
 		case 'd':
-		case 67:
             if(valid_move(player, map, key)) do_movement_action(player, map, 1, 0);
             break;
 		case 'k':

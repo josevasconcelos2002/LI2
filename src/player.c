@@ -34,19 +34,19 @@ bool valid_move(PLAYER *player, char map[ROWS][COLS], char key){
     int x = player->x, y = player->y;
     switch(key) {
         case 'w':
-		case 65: 
+		case '5': 
 			if(map[y-1][x] == '#' || map[y-1][x] == '!') return false;
             break;
         case 's': 
-		case 66:
+		case '2':
 			if(map[y+1][x] == '#' || map[y+1][x] == '!') return false;
             break;
         case 'a':
-		case 68:
+		case '1':
 			if(map[y][x-1] == '#' || map[y][x-1] == '!') return false;
             break;
         case 'd':
-		case 67:
+		case '3':
 			if(map[y][x+1] == '#' || map[y][x+1] == '!') return false;
             break;            
     }
