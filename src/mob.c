@@ -36,7 +36,7 @@ void init_boss(char map[ROWS][COLS], MOB *boss) {
         boss->y = y;
         boss->hp = 150;
         boss->attack = 15;
-		boss->is_visible = true; //visivel ou nao?
+		boss->is_visible = false; //visivel ou nao?
         boss->is_dead = false;
 
 		map[y][x] = '!';
